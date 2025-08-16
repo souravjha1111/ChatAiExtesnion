@@ -373,17 +373,72 @@ function updateChatHistory() {
       const timestamp = formatTimestamp(msg.timestamp);
       const isUser = msg.role === "user";
       
+      let actionButtons = "";
+      if (!isUser) {
+        actionButtons = `
+          <div class="message-actions">
+            <button class="message-action-btn" onclick="copyMessage('${msg.id}')" title="Copy message">
+              <i class="fa-solid fa-copy"></i> Copy
+            </button>
+            <button class="message-action-btn" onclick="editMessage('${msg.id}')" title="Edit message">
+              <i class="fa-solid fa-edit"></i> Edit
+            </button>
+          </div>
+        `;
+      }
+      
       return `
         <div class='chat-message ${msg.role}'>
           <div class="message-content">
             <b>${isUser ? 'You' : 'Bot'}:</b> ${msg.content}
           </div>
           <span class="message-timestamp">${timestamp}</span>
+          ${actionButtons}
         </div>
       `;
     })
     .join("");
 }
+
+// Add global functions for message actions
+(window as any).copyMessage = function(messageId: string) {
+  const message = enhancedChatHistory.find(msg => msg.id === messageId);
+  if (message) {
+    navigator.clipboard.writeText(message.content);
+    console.log('Copied message:', message.content);
+    
+    // Show visual feedback
+    const button = document.querySelector(`[onclick="copyMessage('${messageId}')"]`) as HTMLElement;
+    if (button) {
+      const originalText = button.innerHTML;
+      button.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+      button.style.color = '#28a745';
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.style.color = '';
+      }, 2000);
+    }
+  }
+};
+
+(window as any).editMessage = function(messageId: string) {
+  const messageIndex = enhancedChatHistory.findIndex(msg => msg.id === messageId);
+  if (messageIndex === -1) return;
+  
+  const message = enhancedChatHistory[messageIndex];
+  const newContent = prompt("Edit message:", message.content);
+  
+  if (newContent !== null && newContent.trim() !== "") {
+    message.content = newContent.trim();
+    // Update the corresponding chatHistory entry
+    const chatIndex = Math.floor(messageIndex / 2); // Since chatHistory has user+assistant pairs
+    if (chatHistory[chatIndex]) {
+      chatHistory[chatIndex].content = newContent.trim();
+    }
+    updateChatHistory();
+    console.log('Edited message:', newContent);
+  }
+};
 
 
 
