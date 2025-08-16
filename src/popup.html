@@ -12,7 +12,12 @@
   <body>
     <div class="container">
       <div class="header">
-        <select id="model-selection"></select>
+        <div class="header-top">
+          <select id="model-selection"></select>
+          <button id="clear-chat" class="btn clear-btn" title="Clear Chat History">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
         <div id="loadingBox">
           <p id="init-label">Initializing model...</p>
           <div id="loadingContainer"></div>
@@ -22,19 +27,6 @@
 
       <div class="chat-container">
         <div id="chat-history"></div>
-        <div id="answerWrapper">
-          <div id="answer"></div>
-          <div class="copyRow">
-            <span id="timestamp"></span>
-            <button
-              id="copyAnswer"
-              class="btn copyButton"
-              title="Copy the Answer to the Clipboard"
-            >
-              <i class="fa-solid fa-copy fa-lg"></i>
-            </button>
-          </div>
-        </div>
       </div>
 
       <div class="input-section">

@@ -1,82 +1,133 @@
-// Only the content script is able to access the DOM
+// Content script for MLCBot extension - Smart Comment Feature
 
-// Map to keep track of processed LinkedIn post IDs
-const processedPosts = new Map();
+let commentDiv = null;
 
-// Helper to extract LinkedIn feed posts
-function extractLinkedInPosts() {
-  // LinkedIn feed posts have a class like 'feed-shared-update-v2' or similar
-  // This selector may need adjustment if LinkedIn changes their DOM
-  return Array.from(document.querySelectorAll('[data-urn^="urn:li:activity:"]'));
-}
-
-// Helper to get unique post ID from a post element
-function getPostId(postElem) {
-  // The data-urn attribute is unique for each post
-  return postElem.getAttribute('data-urn');
-}
-
-// Helper to extract text content from a post element
-function getPostContent(postElem) {
-  // Try to get the main text content of the post
-  const mainText = postElem.querySelector('.feed-shared-update-v2__description, .update-components-text, [data-test-post-content]');
-  return mainText ? mainText.innerText.trim() : postElem.innerText.trim();
-}
-
-// Helper to inject a summary box at the side of a post
-function injectSummaryBox(postElem, summary) {
-  let box = postElem.querySelector('.llm-summary-box');
-  if (!box) {
-    box = document.createElement('div');
-    box.className = 'llm-summary-box';
-    // Style the box to appear at the right side of the post
-    box.style.position = 'absolute';
-    box.style.top = '10px';
-    box.style.right = '-320px';
-    box.style.width = '300px';
-    box.style.background = '#f3f6f8';
-    box.style.border = '1px solid #d1dbe6';
-    box.style.borderRadius = '8px';
-    box.style.padding = '12px';
-    box.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
-    box.style.fontSize = '14px';
-    box.style.color = '#222';
-    box.style.zIndex = '9999';
-    box.style.overflowWrap = 'break-word';
-    box.style.minHeight = '40px';
-    box.innerText = summary || 'Summarizing...';
-    // Make sure the post is relatively positioned
-    postElem.style.position = 'relative';
-    postElem.appendChild(box);
-  } else {
-    box.innerText = summary;
+// Create comment display div
+function createCommentDiv() {
+  if (commentDiv) {
+    document.body.removeChild(commentDiv);
   }
+  
+  commentDiv = document.createElement('div');
+  commentDiv.id = 'mlcbot-comment-div';
+  commentDiv.innerHTML = `
+    <div class="mlcbot-comment-header">
+      <span class="mlcbot-comment-title">Smart Comment</span>
+      <button class="mlcbot-close-btn" id="close-comment">×</button>
+    </div>
+    <div class="mlcbot-comment-content" id="comment-content">
+      Generating comment...
+    </div>
+    <div class="mlcbot-comment-actions">
+      <button class="mlcbot-copy-btn" id="copy-comment">Copy</button>
+    </div>
+  `;
+  
+  // Add styles
+  commentDiv.style.cssText = `
+    position: fixed;
+    background: rgb(118, 73, 254);
+    color: #ffffff;
+    border: 1px solid #b8860b;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(210, 105, 30, 0.3);
+    padding: 12px;
+    z-index: 10001;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    max-width: 300px;
+    min-width: 250px;
+    display: none;
+  `;
+  
+  document.body.appendChild(commentDiv);
+  
+  // Add event listeners
+  document.getElementById('close-comment').addEventListener('click', closeCommentDiv);
+  document.getElementById('copy-comment').addEventListener('click', copyComment);
 }
 
-// Listen for messages from the extension to update summaries
+// Listen for comment results from background script
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.type === 'llm-summary-result' && msg.postId && msg.summary) {
-    const postElem = document.querySelector(`[data-urn="${msg.postId}"]`);
-    if (postElem) {
-      injectSummaryBox(postElem, msg.summary);
-    }
+  if (msg.type === 'smart-comment-result' && msg.comment) {
+    showCommentDiv();
+    updateCommentContent(msg.comment);
   }
 });
 
-// Main logic to scan and process posts
-function processLinkedInFeed() {
-  const posts = extractLinkedInPosts();
-  for (const postElem of posts) {
-    const postId = getPostId(postElem);
-    if (!postId || processedPosts.has(postId)) continue;
-    const content = getPostContent(postElem);
-    if (!content || content.length < 20) continue; // skip empty/short posts
-    processedPosts.set(postId, true);
-    injectSummaryBox(postElem, 'Summarizing...');
-    // Send message to background/popup for LLM summarization
-    chrome.runtime.sendMessage({ type: 'llm-summarize', postId, content });
+// Show comment div
+function showCommentDiv() {
+  if (!commentDiv) {
+    createCommentDiv();
+  }
+  
+  // Position near the current selection
+  const selection = window.getSelection();
+  if (selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    
+    commentDiv.style.left = (rect.left + window.scrollX) + 'px';
+    commentDiv.style.top = (rect.bottom + window.scrollY + 10) + 'px';
+  } else {
+    // Fallback position - center of viewport
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    commentDiv.style.left = (viewportWidth / 2 - 150) + 'px';
+    commentDiv.style.top = (viewportHeight / 2 - 100) + 'px';
+  }
+  
+  commentDiv.style.display = 'block';
+  document.getElementById('comment-content').innerHTML = 'Generating comment...';
+}
+
+// Update comment content
+function updateCommentContent(comment) {
+  const contentDiv = document.getElementById('comment-content');
+  if (contentDiv) {
+    contentDiv.innerHTML = comment;
   }
 }
 
-// Run initially and on scroll (to catch new posts)
-setInterval(processLinkedInFeed, 2000);
+// Close comment div
+function closeCommentDiv() {
+  if (commentDiv) {
+    commentDiv.style.display = 'none';
+  }
+}
+
+// Copy comment to clipboard
+function copyComment() {
+  const contentDiv = document.getElementById('comment-content');
+  if (contentDiv) {
+    const comment = contentDiv.innerText;
+    navigator.clipboard.writeText(comment).then(() => {
+      // Show brief feedback
+      const copyBtn = document.getElementById('copy-comment');
+      const originalText = copyBtn.innerText;
+      copyBtn.innerText = 'Copied!';
+      setTimeout(() => {
+        copyBtn.innerText = originalText;
+      }, 1000);
+    });
+  }
+}
+
+// Initialize
+function init() {
+  createCommentDiv();
+  
+  // Add escape key listener
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (commentDiv) commentDiv.style.display = 'none';
+    }
+  });
+}
+
+// Start when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

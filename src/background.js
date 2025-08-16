@@ -3,39 +3,50 @@ chrome.action.onClicked.addListener((tab) => {
   chrome.sidePanel.open({ windowId: tab.windowId });
 });
 
-// Initialize the LLM engine once
-let enginePromise = null;
-function getEngine() {
-  if (!enginePromise) {
-    enginePromise = CreateMLCEngine("Qwen2-1.5B-Instruct-q4f16_1-MLC");
-  }
-  return enginePromise;
-}
+// Create context menu on extension installation
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "generate-smart-comment",
+    title: "Generate Smart Comment",
+    contexts: ["selection"]
+  });
+});
 
-// Listen for summarize requests from content script and relay to popup
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.type === 'llm-summarize' && msg.postId && msg.content) {
-    console.log('[BG] Forwarding summarize request to popup:', msg);
+// Handle context menu clicks
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "generate-smart-comment" && info.selectionText) {
+    console.log('[BG] Context menu clicked with text:', info.selectionText);
+    
+    // Forward the request to the popup to use the AI engine
     chrome.runtime.sendMessage({
-      type: 'llm-summarize-popup',
-      postId: msg.postId,
-      content: msg.content,
-      tabId: sender.tab.id
-    });
-  } else if (msg.type === 'llm-summary-result-popup' && msg.postId && msg.summary && msg.tabId) {
-    // Forward the summary result from popup to the correct tab/content script
-    console.log('[BG] Forwarding summary result to content script:', msg);
-    chrome.tabs.sendMessage(msg.tabId, {
-      type: 'llm-summary-result',
-      postId: msg.postId,
-      summary: msg.summary
+      type: 'generate-smart-comment-popup',
+      text: info.selectionText,
+      tabId: tab.id
     });
   }
 });
 
-// Auto-open side panel when a LinkedIn URL is loaded
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && tab.url && tab.url.includes('linkedin.com/feed')) {
-    chrome.sidePanel.open({ windowId: tab.windowId });
+// Listen for smart comment generation requests from content script
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === 'generate-smart-comment' && msg.text) {
+    console.log('[BG] Received smart comment request:', msg.text);
+    
+    // Forward the request to the popup to use the AI engine
+    chrome.runtime.sendMessage({
+      type: 'generate-smart-comment-popup',
+      text: msg.text,
+      tabId: sender.tab.id
+    });
+    
+    // Send immediate response to content script
+    sendResponse({ status: 'processing' });
+  } else if (msg.type === 'smart-comment-result-popup' && msg.comment && msg.tabId) {
+    // Forward the comment result from popup to the correct tab/content script
+    console.log('[BG] Forwarding comment result to content script:', msg.comment);
+    chrome.tabs.sendMessage(msg.tabId, {
+      type: 'smart-comment-result',
+      comment: msg.comment
+    });
   }
-}); 
+});
+ 

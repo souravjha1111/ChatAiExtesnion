@@ -11,7 +11,6 @@ import {
   InitProgressReport,
   CreateMLCEngine,
   ChatCompletionMessageParam,
-  prebuiltAppConfig,
 } from "@mlc-ai/web-llm";
 import { ProgressBar, Line } from "progressbar.js";
 
@@ -31,17 +30,15 @@ function getElementAndCheck(id: string): HTMLElement {
   return element;
 }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 
 const queryInput = getElementAndCheck("query-input")!;
 const submitButton = getElementAndCheck("submit-button")!;
 const modelName = getElementAndCheck("model-name");
 
-let context = "";
 let modelDisplayName = "";
 
-// throws runtime.lastError if you refresh extension AND try to access a webpage that is already open
-fetchPageContents();
+// Initialize the extension
 
 (<HTMLButtonElement>submitButton).disabled = true;
 
@@ -115,6 +112,16 @@ modelName.innerText = "Now chatting with " + modelDisplayName;
 
 let chatHistory: ChatCompletionMessageParam[] = [];
 
+// Add interface for enhanced message structure
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+  id: string;
+}
+
+let enhancedChatHistory: ChatMessage[] = [];
+
 function enableInputs() {
   if (isLoadingParams) {
     setTimeout(() => {
@@ -161,15 +168,34 @@ async function handleClick() {
   (<HTMLButtonElement>submitButton).disabled = true;
 
   const message = (<HTMLInputElement>queryInput).value;
-  document.getElementById("answer")!.innerHTML = "";
-  document.getElementById("answerWrapper")!.style.display = "none";
   document.getElementById("loading-indicator")!.style.display = "block";
 
+  // Add user message with timestamp
+  const userMessage: ChatMessage = {
+    role: "user",
+    content: message,
+    timestamp: new Date(),
+    id: generateMessageId()
+  };
+  
   chatHistory.push({ role: "user", content: message });
+  enhancedChatHistory.push(userMessage);
   
   // Clear the input field after sending
   (<HTMLInputElement>queryInput).value = "";
   
+  updateChatHistory();
+
+  // Create assistant message placeholder
+  const assistantMessage: ChatMessage = {
+    role: "assistant",
+    content: "",
+    timestamp: new Date(),
+    id: generateMessageId()
+  };
+  
+  // Add empty assistant message to chat history
+  enhancedChatHistory.push(assistantMessage);
   updateChatHistory();
 
   let curMessage = "";
@@ -177,22 +203,32 @@ async function handleClick() {
     stream: true,
     messages: chatHistory,
   });
+  
   for await (const chunk of completion) {
     const curDelta = chunk.choices[0].delta.content;
     if (curDelta) {
       curMessage += curDelta;
+      // Update the assistant message content in real-time
+      assistantMessage.content = curMessage;
+      updateChatHistory();
     }
-    updateAnswer(curMessage);
   }
+  
   const response = await engine.getMessage();
+  
+  // Update final response
+  assistantMessage.content = response;
   chatHistory.push({ role: "assistant", content: response });
-
   updateChatHistory();
 
   requestInProgress = false;
   (<HTMLButtonElement>submitButton).disabled = false;
 }
 submitButton.addEventListener("click", handleClick);
+
+
+
+
 
 // listen for changes in modelSelector
 async function handleSelectChange() {
@@ -218,6 +254,10 @@ async function handleSelectChange() {
   }
   engine.resetChat();
   chatHistory = [];
+  enhancedChatHistory = [];
+  updateChatHistory();
+  
+
   await engine.unload();
 
   selectedModel = modelSelector.value;
@@ -252,19 +292,16 @@ async function handleSelectChange() {
 }
 modelSelector.addEventListener("change", handleSelectChange);
 
-// Listen for messages from the background script
-chrome.runtime.onMessage.addListener(({ answer, error }) => {
-  if (answer) {
-    updateAnswer(answer);
-  }
-});
-
-// Listen for summarize requests from background script
+// Listen for smart comment generation requests from background script
 chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
-  if (msg.type === 'llm-summarize-popup' && msg.postId && msg.content && msg.tabId) {
-    console.log('[POPUP] Received summarize request from background:', msg);
-    // Prepare the prompt for strict summary
-    const prompt = `Summarize the following LinkedIn post in 1-2 sentences. Strictly return only the summary and nothing else. Do not include text like "Here is a summary of the post" or "Here is the summary" or anything like that.\n\nPost: ${msg.content}`;
+  if (msg.type === 'generate-smart-comment-popup' && msg.text && msg.tabId) {
+    console.log('[POPUP] Received smart comment request from background:', msg);
+    
+    // Prepare the prompt for strict comment generation
+    const prompt = `Generate a smart, engaging comment for the following text. The comment should be thoughtful, relevant, and add value to the conversation. Return ONLY the comment text and nothing else. Do not include any explanations, quotes, or additional text.
+
+Text: "${msg.text}"`;
+    
     try {
       const completion = await engine.chat.completions.create({
         stream: false,
@@ -272,68 +309,82 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
           { role: "user", content: prompt }
         ]
       });
-      let summary = "";
+      
+      let comment = "";
       if (completion.choices && completion.choices[0] && completion.choices[0].message && completion.choices[0].message.content) {
-        summary = completion.choices[0].message.content.trim();
+        comment = completion.choices[0].message.content.trim();
       }
-      // Send the summary back to the background script
+      
+      // Send the comment back to the background script
       chrome.runtime.sendMessage({
-        type: 'llm-summary-result-popup',
-        postId: msg.postId,
-        summary,
+        type: 'smart-comment-result-popup',
+        comment: comment,
         tabId: msg.tabId
       });
-      console.log('[POPUP] Sent summary result to background:', summary);
+      
+      console.log('[POPUP] Sent comment result to background:', comment);
     } catch (e) {
       chrome.runtime.sendMessage({
-        type: 'llm-summary-result-popup',
-        postId: msg.postId,
-        summary: '[Error generating summary]',
+        type: 'smart-comment-result-popup',
+        comment: 'Error generating comment. Please try again.',
         tabId: msg.tabId
       });
-      console.error('[POPUP] Error generating summary:', e);
+      console.error('[POPUP] Error generating comment:', e);
     }
   }
 });
 
-function updateAnswer(answer: string) {
-  const answerElement = document.getElementById("answer")!;
-  answerElement.innerHTML = answer;
-  document.getElementById("answerWrapper")!.style.display = "block";
-  document.getElementById("loading-indicator")!.style.display = "none";
-  document.getElementById("timestamp")!.innerText = new Date().toLocaleTimeString();
-}
 
-// Copy answer to clipboard
-document.getElementById("copyAnswer")!.addEventListener("click", () => {
-  const answer = document.getElementById("answer")!.innerText;
-  navigator.clipboard.writeText(answer);
+
+
+
+// Clear chat functionality
+const clearChatButton = getElementAndCheck("clear-chat") as HTMLButtonElement;
+
+clearChatButton.addEventListener("click", () => {
+  clearChat();
 });
 
-// Add a function to render chat history
+function clearChat() {
+  chatHistory = [];
+  enhancedChatHistory = [];
+  updateChatHistory();
+  document.getElementById("loading-indicator")!.style.display = "none";
+  queryInput.focus();
+}
+
+// Generate unique message ID
+function generateMessageId(): string {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+// Format timestamp
+function formatTimestamp(date: Date): string {
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// Add a function to render chat history with timestamps
 function updateChatHistory() {
   const chatHistoryDiv = document.getElementById("chat-history");
   if (!chatHistoryDiv) return;
-  chatHistoryDiv.innerHTML = chatHistory
+  
+  chatHistoryDiv.innerHTML = enhancedChatHistory
     .map((msg) => {
-      if (msg.role === "user") {
-        return `<div class='chat-message user'><b>You:</b> ${msg.content}</div>`;
-      } else if (msg.role === "assistant") {
-        return `<div class='chat-message assistant'><b>Bot:</b> ${msg.content}</div>`;
-      } else {
-        return '';
-      }
+      const timestamp = formatTimestamp(msg.timestamp);
+      const isUser = msg.role === "user";
+      
+      return `
+        <div class='chat-message ${msg.role}'>
+          <div class="message-content">
+            <b>${isUser ? 'You' : 'Bot'}:</b> ${msg.content}
+          </div>
+          <span class="message-timestamp">${timestamp}</span>
+        </div>
+      `;
     })
     .join("");
 }
 
-function fetchPageContents() {
-  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-    const port = chrome.tabs.connect(tabs[0].id, { name: "channelName" });
-    port.postMessage({});
-    port.onMessage.addListener(function (msg) {
-      console.log("Page contents:", msg.contents);
-      context = msg.contents;
-    });
-  });
-}
+
+
+

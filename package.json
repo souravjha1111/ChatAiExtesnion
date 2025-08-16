@@ -1,7 +1,7 @@
 {
-  "name": "chrome-extension",
-  "version": "1.0.1",
-  "description": "",
+  "name": "mlcbot-extension",
+  "version": "1.0.2",
+  "description": "AI-powered chatbot with local LLM",
   "private": true,
   "scripts": {
     "build": "parcel build src/manifest.json --config @parcel/config-webextension"
