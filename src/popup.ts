@@ -120,7 +120,28 @@ interface ChatMessage {
   id: string;
 }
 
+// Add interface for message mapping
+interface MessageMapping {
+  [key: string]: string; // messageId -> currentContent
+}
+
 let enhancedChatHistory: ChatMessage[] = [];
+let messageMapping: MessageMapping = {}; // Store current content for each message
+
+// Function to get current content of a message (either original or edited)
+function getCurrentMessageContent(messageId: string): string {
+  return messageMapping[messageId] || enhancedChatHistory.find(msg => msg.id === messageId)?.content || '';
+}
+
+// Function to update message content in the mapping
+function updateMessageContent(messageId: string, newContent: string) {
+  messageMapping[messageId] = newContent;
+}
+
+// Function to reset message content to original
+function resetMessageContent(messageId: string) {
+  delete messageMapping[messageId];
+}
 
 function enableInputs() {
   if (isLoadingParams) {
@@ -180,6 +201,7 @@ async function handleClick() {
   
   chatHistory.push({ role: "user", content: message });
   enhancedChatHistory.push(userMessage);
+  updateMessageContent(userMessage.id, userMessage.content); // Update mapping
   
   // Clear the input field after sending
   (<HTMLInputElement>queryInput).value = "";
@@ -210,6 +232,7 @@ async function handleClick() {
       curMessage += curDelta;
       // Update the assistant message content in real-time
       assistantMessage.content = curMessage;
+      updateMessageContent(assistantMessage.id, assistantMessage.content); // Update mapping
       updateChatHistory();
     }
   }
@@ -218,6 +241,7 @@ async function handleClick() {
   
   // Update final response
   assistantMessage.content = response;
+  updateMessageContent(assistantMessage.id, assistantMessage.content); // Update mapping
   chatHistory.push({ role: "assistant", content: response });
   updateChatHistory();
 
@@ -255,6 +279,7 @@ async function handleSelectChange() {
   engine.resetChat();
   chatHistory = [];
   enhancedChatHistory = [];
+  messageMapping = {}; // Reset message mapping
   updateChatHistory();
   
 
@@ -348,6 +373,7 @@ clearChatButton.addEventListener("click", () => {
 function clearChat() {
   chatHistory = [];
   enhancedChatHistory = [];
+  messageMapping = {}; // Reset message mapping
   updateChatHistory();
   document.getElementById("loading-indicator")!.style.display = "none";
   queryInput.focus();
@@ -389,7 +415,7 @@ function updateChatHistory() {
       return `
         <div class='chat-message ${msg.role}'>
           <div class="message-content">
-            <b>${isUser ? 'You' : 'Bot'}:</b> ${msg.content}
+            <b>${isUser ? 'You' : 'Bot'}:</b> ${getCurrentMessageContent(msg.id)}
           </div>
           <span class="message-timestamp">${timestamp}</span>
           ${actionButtons}
@@ -567,7 +593,7 @@ function createEditDialog(message: ChatMessage, messageIndex: number) {
   
   // Create textarea
   const textarea = document.createElement('textarea');
-  textarea.value = message.content;
+  textarea.value = getCurrentMessageContent(message.id);
   textarea.setAttribute('aria-label', 'Message content to edit');
   textarea.style.cssText = `
     width: 100%;
@@ -596,35 +622,55 @@ function createEditDialog(message: ChatMessage, messageIndex: number) {
   cancelBtn.style.cssText = 'background-color: #6c757d;';
   cancelBtn.addEventListener('click', () => dialog.remove());
   
-  // Create save button
+  // Create save button with different behavior based on message type
   const saveBtn = document.createElement('button');
-  saveBtn.textContent = 'Save';
+  if (message.role === 'user') {
+    saveBtn.textContent = 'Update & Ask';
+    saveBtn.style.cssText = 'background-color: #28a745;';
+  } else {
+    saveBtn.textContent = 'Save';
+  }
   saveBtn.className = 'btn';
-  saveBtn.addEventListener('click', () => {
-    const newContent = textarea.value.trim();
-    if (newContent !== "" && newContent !== message.content) {
-      message.content = newContent;
-      
-      // Update the corresponding chatHistory entry
-      // Find the matching entry in chatHistory
-      const chatIndex = chatHistory.findIndex(chatMsg => 
-        chatMsg.role === message.role && 
-        chatMsg.content === message.content
-      );
-      
-      if (chatIndex !== -1) {
-        chatHistory[chatIndex].content = newContent.trim();
-      }
-      
-      updateChatHistory();
-      console.log('Edited message:', newContent);
-    }
-    dialog.remove();
-  });
   
-  // Assemble dialog
+  // Assemble buttons
   buttonContainer.appendChild(cancelBtn);
   buttonContainer.appendChild(saveBtn);
+  
+  // Add save button functionality
+  saveBtn.addEventListener('click', () => {
+    const newContent = textarea.value.trim();
+    if (newContent !== "" && newContent !== getCurrentMessageContent(message.id)) {
+      if (message.role === 'user') {
+        // For user messages: DON'T modify the original, just ask the updated question
+        // The original question stays intact in the chat history
+        
+        updateChatHistory();
+        console.log('Asking updated question:', newContent);
+        
+        // Close the dialog
+        dialog.remove();
+        
+        // Paste the updated question into the input box
+        const queryInput = document.getElementById('query-input') as HTMLInputElement;
+        if (queryInput) {
+          queryInput.value = newContent;
+          queryInput.focus();
+          
+          // Automatically submit the updated question
+          setTimeout(() => {
+            submitButton.click();
+          }, 100);
+        }
+      } else {
+        // For bot messages: update the mapping
+        updateMessageContent(message.id, newContent);
+        
+        updateChatHistory();
+        console.log('Edited bot message:', newContent);
+        dialog.remove();
+      }
+    }
+  });
   dialogContent.appendChild(header);
   dialogContent.appendChild(textarea);
   dialogContent.appendChild(buttonContainer);
