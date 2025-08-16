@@ -374,18 +374,17 @@ function updateChatHistory() {
       const isUser = msg.role === "user";
       
       let actionButtons = "";
-      if (!isUser) {
-        actionButtons = `
-          <div class="message-actions">
-            <button class="message-action-btn" onclick="copyMessage('${msg.id}')" title="Copy message">
-              <i class="fa-solid fa-copy"></i> Copy
-            </button>
-            <button class="message-action-btn" onclick="editMessage('${msg.id}')" title="Edit message">
-              <i class="fa-solid fa-edit"></i> Edit
-            </button>
-          </div>
-        `;
-      }
+      // Show action buttons for both user and assistant messages
+      actionButtons = `
+        <div class="message-actions">
+          <button class="message-action-btn copy-btn" data-message-id="${msg.id}" title="Copy message">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+          <button class="message-action-btn edit-btn" data-message-id="${msg.id}" title="Edit message">
+            <i class="fa-solid fa-edit"></i>
+          </button>
+        </div>
+      `;
       
       return `
         <div class='chat-message ${msg.role}'>
@@ -398,47 +397,286 @@ function updateChatHistory() {
       `;
     })
     .join("");
+  
+  // Add event listeners to the newly created buttons
+  addMessageActionListeners();
 }
 
-// Add global functions for message actions
-(window as any).copyMessage = function(messageId: string) {
+// Function to add event listeners to message action buttons
+function addMessageActionListeners() {
+  // Add copy button listeners
+  const copyButtons = document.querySelectorAll('.copy-btn');
+  copyButtons.forEach(button => {
+    button.addEventListener('click', handleCopyMessage);
+  });
+  
+  // Add edit button listeners
+  const editButtons = document.querySelectorAll('.edit-btn');
+  editButtons.forEach(button => {
+    button.addEventListener('click', handleEditMessage);
+  });
+}
+
+// Handle copy message functionality
+function handleCopyMessage(event: Event) {
+  const button = event.currentTarget as HTMLElement;
+  const messageId = button.getAttribute('data-message-id');
+  
+  if (!messageId) return;
+  
   const message = enhancedChatHistory.find(msg => msg.id === messageId);
   if (message) {
-    navigator.clipboard.writeText(message.content);
-    console.log('Copied message:', message.content);
-    
-    // Show visual feedback
-    const button = document.querySelector(`[onclick="copyMessage('${messageId}')"]`) as HTMLElement;
-    if (button) {
-      const originalText = button.innerHTML;
-      button.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-      button.style.color = '#28a745';
-      setTimeout(() => {
-        button.innerHTML = originalText;
-        button.style.color = '';
-      }, 2000);
+    // Try modern clipboard API first
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(message.content).then(() => {
+        console.log('Copied message:', message.content);
+        showCopySuccess(button);
+      }).catch(err => {
+        console.error('Failed to copy message:', err);
+        fallbackCopy(message.content, button);
+      });
+    } else {
+      // Fallback for older browsers or non-secure contexts
+      fallbackCopy(message.content, button);
     }
   }
-};
+}
 
-(window as any).editMessage = function(messageId: string) {
+// Fallback copy method
+function fallbackCopy(text: string, button: HTMLElement) {
+  try {
+    // Create a temporary textarea element
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    // Try to copy using execCommand (legacy support)
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textArea);
+    
+    if (successful) {
+      console.log('Copied message using fallback method:', text);
+      showCopySuccess(button);
+    } else {
+      console.error('Fallback copy failed');
+      showCopyError(button);
+    }
+  } catch (err) {
+    console.error('Fallback copy error:', err);
+    showCopyError(button);
+  }
+}
+
+// Show copy success feedback
+function showCopySuccess(button: HTMLElement) {
+  const originalIcon = button.innerHTML;
+  button.innerHTML = '<i class="fa-solid fa-check"></i>';
+  button.style.color = '#28a745';
+  button.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+  button.style.borderColor = 'rgba(40, 167, 69, 0.3)';
+  
+  setTimeout(() => {
+    button.innerHTML = originalIcon;
+    button.style.color = '';
+    button.style.backgroundColor = '';
+    button.style.borderColor = '';
+  }, 2000);
+}
+
+// Show copy error feedback
+function showCopyError(button: HTMLElement) {
+  const originalIcon = button.innerHTML;
+  button.innerHTML = '<i class="fa-solid fa-times"></i>';
+  button.style.color = '#dc3545';
+  button.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+  button.style.borderColor = 'rgba(220, 53, 69, 0.3)';
+  
+  setTimeout(() => {
+    button.innerHTML = originalIcon;
+    button.style.color = '';
+    button.style.backgroundColor = '';
+    button.style.borderColor = '';
+  }, 2000);
+}
+
+// Handle edit message functionality
+function handleEditMessage(event: Event) {
+  const button = event.currentTarget as HTMLElement;
+  const messageId = button.getAttribute('data-message-id');
+  
+  if (!messageId) return;
+  
   const messageIndex = enhancedChatHistory.findIndex(msg => msg.id === messageId);
   if (messageIndex === -1) return;
   
   const message = enhancedChatHistory[messageIndex];
-  const newContent = prompt("Edit message:", message.content);
   
-  if (newContent !== null && newContent.trim() !== "") {
-    message.content = newContent.trim();
-    // Update the corresponding chatHistory entry
-    const chatIndex = Math.floor(messageIndex / 2); // Since chatHistory has user+assistant pairs
-    if (chatHistory[chatIndex]) {
-      chatHistory[chatIndex].content = newContent.trim();
-    }
-    updateChatHistory();
-    console.log('Edited message:', newContent);
+  // Create a custom edit dialog instead of using prompt()
+  createEditDialog(message, messageIndex);
+}
+
+// Create a custom edit dialog
+function createEditDialog(message: ChatMessage, messageIndex: number) {
+  // Remove any existing edit dialog
+  const existingDialog = document.querySelector('.edit-dialog');
+  if (existingDialog) {
+    existingDialog.remove();
   }
-};
+  
+  // Create dialog container
+  const dialog = document.createElement('div');
+  dialog.className = 'edit-dialog';
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-labelledby', 'edit-dialog-title');
+  dialog.setAttribute('aria-modal', 'true');
+  dialog.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  `;
+  
+  // Create dialog content
+  const dialogContent = document.createElement('div');
+  dialogContent.style.cssText = `
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    min-width: 300px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+  `;
+  
+  // Create dialog header
+  const header = document.createElement('h3');
+  header.id = 'edit-dialog-title';
+  header.textContent = `Edit ${message.role === 'user' ? 'Your' : 'Bot'} Message`;
+  header.style.cssText = 'margin: 0 0 15px 0; color: #333;';
+  
+  // Create textarea
+  const textarea = document.createElement('textarea');
+  textarea.value = message.content;
+  textarea.setAttribute('aria-label', 'Message content to edit');
+  textarea.style.cssText = `
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    margin-bottom: 20px;
+  `;
+  
+  // Create button container
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style.cssText = `
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  `;
+  
+  // Create cancel button
+  const cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.className = 'btn';
+  cancelBtn.style.cssText = 'background-color: #6c757d;';
+  cancelBtn.addEventListener('click', () => dialog.remove());
+  
+  // Create save button
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save';
+  saveBtn.className = 'btn';
+  saveBtn.addEventListener('click', () => {
+    const newContent = textarea.value.trim();
+    if (newContent !== "" && newContent !== message.content) {
+      message.content = newContent;
+      
+      // Update the corresponding chatHistory entry
+      // Find the matching entry in chatHistory
+      const chatIndex = chatHistory.findIndex(chatMsg => 
+        chatMsg.role === message.role && 
+        chatMsg.content === message.content
+      );
+      
+      if (chatIndex !== -1) {
+        chatHistory[chatIndex].content = newContent.trim();
+      }
+      
+      updateChatHistory();
+      console.log('Edited message:', newContent);
+    }
+    dialog.remove();
+  });
+  
+  // Assemble dialog
+  buttonContainer.appendChild(cancelBtn);
+  buttonContainer.appendChild(saveBtn);
+  dialogContent.appendChild(header);
+  dialogContent.appendChild(textarea);
+  dialogContent.appendChild(buttonContainer);
+  dialog.appendChild(dialogContent);
+  
+  // Add to body
+  document.body.appendChild(dialog);
+  
+  // Focus textarea
+  textarea.focus();
+  textarea.select();
+  
+  // Handle keyboard navigation
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      dialog.remove();
+      document.removeEventListener('keydown', handleKeydown);
+    } else if (e.key === 'Enter' && e.ctrlKey) {
+      e.preventDefault();
+      saveBtn.click();
+    }
+  };
+  document.addEventListener('keydown', handleKeydown);
+  
+  // Handle click outside to close
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) {
+      dialog.remove();
+    }
+  });
+  
+  // Clean up event listeners when dialog is removed
+  const cleanup = () => {
+    document.removeEventListener('keydown', handleKeydown);
+  };
+  
+  // Use MutationObserver to detect when dialog is removed
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'childList') {
+        mutation.removedNodes.forEach((node) => {
+          if (node === dialog) {
+            cleanup();
+            observer.disconnect();
+          }
+        });
+      }
+    });
+  });
+  
+  observer.observe(document.body, { childList: true });
+}
 
 
 

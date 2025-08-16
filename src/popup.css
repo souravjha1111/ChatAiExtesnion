@@ -364,30 +364,58 @@ body {
   display: flex;
   gap: 8px;
   margin-top: 8px;
-  opacity: 1;
+  opacity: 0.8;
   transition: opacity 0.2s;
 }
 
+.chat-message:hover .message-actions {
+  opacity: 1;
+}
+
 .message-action-btn {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.1);
   color: #333;
   cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 4px;
+  border-radius: 4px;
   font-size: 12px;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-weight: 500;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.message-action-btn i {
+  font-size: 12px;
+  line-height: 1;
 }
 
 .message-action-btn:hover {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(0, 0, 0, 0.2);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message-action-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.message-action-btn.copy-btn:hover {
+  background-color: rgba(40, 167, 69, 0.1);
+  border-color: rgba(40, 167, 69, 0.3);
+  color: #28a745;
+}
+
+.message-action-btn.edit-btn:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  border-color: rgba(0, 123, 255, 0.3);
+  color: #007bff;
 }
 
 .chat-message.user .message-action-btn:hover {
@@ -459,4 +487,112 @@ body {
 
 .mlcbot-copy-btn:hover {
   background-color: #ff6347;
+}
+
+/* Edit Dialog Styles */
+.edit-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.edit-dialog > div {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  min-width: 300px;
+  max-width: 80%;
+  max-height: 80%;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  animation: dialogSlideIn 0.2s ease-out;
+}
+
+.edit-dialog h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.edit-dialog textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  margin-bottom: 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.edit-dialog textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.edit-dialog textarea:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.edit-dialog .btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+  min-width: 80px;
+}
+
+.edit-dialog .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.edit-dialog .btn:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.edit-dialog .btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Focus styles for better accessibility */
+.message-action-btn:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.message-action-btn:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
 }
