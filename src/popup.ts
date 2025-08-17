@@ -104,6 +104,9 @@ for (const modelId of availableModels) {
   modelSelector.appendChild(opt);
 }
 
+// Display initial model info
+displayModelInfo(selectedModel);
+
 modelName.innerText = "Loading initial model...";
 const engine: MLCEngineInterface = await CreateMLCEngine(selectedModel, {
   initProgressCallback: initProgressCallback,
@@ -128,6 +131,8 @@ interface MessageMapping {
 let enhancedChatHistory: ChatMessage[] = [];
 let messageMapping: MessageMapping = {}; // Store current content for each message
 
+
+
 // Function to get current content of a message (either original or edited)
 function getCurrentMessageContent(messageId: string): string {
   return messageMapping[messageId] || enhancedChatHistory.find(msg => msg.id === messageId)?.content || '';
@@ -142,6 +147,10 @@ function updateMessageContent(messageId: string, newContent: string) {
 function resetMessageContent(messageId: string) {
   delete messageMapping[messageId];
 }
+
+
+
+
 
 function enableInputs() {
   if (isLoadingParams) {
@@ -190,6 +199,8 @@ async function handleClick() {
 
   const message = (<HTMLInputElement>queryInput).value;
   document.getElementById("loading-indicator")!.style.display = "block";
+
+
 
   // Add user message with timestamp
   const userMessage: ChatMessage = {
@@ -283,9 +294,16 @@ async function handleSelectChange() {
   updateChatHistory();
   
 
+  
+
   await engine.unload();
 
   selectedModel = modelSelector.value;
+  
+  // Display model info for the newly selected model
+  displayModelInfo(selectedModel);
+  
+
 
   progressBar = new Line("#loadingContainer", {
     strokeWidth: 4,
@@ -376,6 +394,9 @@ function clearChat() {
   messageMapping = {}; // Reset message mapping
   updateChatHistory();
   document.getElementById("loading-indicator")!.style.display = "none";
+  
+
+  
   queryInput.focus();
 }
 
@@ -724,6 +745,179 @@ function createEditDialog(message: ChatMessage, messageIndex: number) {
   observer.observe(document.body, { childList: true });
 }
 
+// Add interface for model information
+interface ModelInfo {
+  name: string;
+  displayName: string;
+  parameterCount: string;
+  quantization: string;
+  family: string;
+  estimatedMemory: string;
+  estimatedSpeed: string;
+}
 
+// Function to extract model information from model ID
+function extractModelInfo(modelId: string): ModelInfo {
+  const parts = modelId.split("-");
+  let family = parts[0];
+  let parameterCount = "";
+  let quantization = "";
+  
+  // Extract parameter count
+  for (let i = 1; i < parts.length; i++) {
+    if (parts[i].includes("B") && !parts[i].includes("q")) {
+      parameterCount = parts[i];
+      break;
+    }
+  }
+  
+  // Extract quantization
+  for (let i = 1; i < parts.length; i++) {
+    if (parts[i].startsWith("q")) {
+      quantization = parts[i];
+      break;
+    }
+  }
+  
+  // Build display name
+  let displayName = family;
+  for (let i = 1; i < parts.length; i++) {
+    if (parts[i][0] !== "q" && !parts[i].includes("B")) {
+      displayName += "-" + parts[i];
+    }
+  }
+  
+  // Estimate memory usage based on parameters and quantization
+  let estimatedMemory = "";
+  if (parameterCount) {
+    const paramNum = parseFloat(parameterCount.replace("B", ""));
+    if (quantization.includes("q4")) {
+      estimatedMemory = `${(paramNum * 0.5).toFixed(1)}GB`;
+    } else {
+      estimatedMemory = `${(paramNum * 2.0).toFixed(1)}GB`;
+    }
+  }
+  
+  // Estimate speed based on parameters
+  let estimatedSpeed = "";
+  if (parameterCount) {
+    const paramNum = parseFloat(parameterCount.replace("B", ""));
+    if (paramNum <= 1.5) {
+      estimatedSpeed = "Fast";
+    } else if (paramNum <= 7) {
+      estimatedSpeed = "Medium";
+    } else {
+      estimatedSpeed = "Slow";
+    }
+  }
+  
+  // Capabilities removed for compact display
+  
+  return {
+    name: modelId,
+    displayName,
+    parameterCount,
+    quantization,
+    family,
+    estimatedMemory,
+    estimatedSpeed
+  };
+}
+
+
+
+// Function to display model information
+function displayModelInfo(modelId: string) {
+  const modelInfo = extractModelInfo(modelId);
+  
+
+  
+  // Create or update model info display
+  let modelInfoDiv = document.getElementById("model-info");
+  if (!modelInfoDiv) {
+    modelInfoDiv = document.createElement("div");
+    modelInfoDiv.id = "model-info";
+    modelInfoDiv.className = "model-info-compact";
+    
+    // Insert after model selector
+    const modelSelector = document.getElementById("model-selection");
+    if (modelSelector && modelSelector.parentNode) {
+      modelSelector.parentNode.insertBefore(modelInfoDiv, modelSelector.nextSibling);
+    }
+  }
+  
+  // Create shortened model name (5-6 characters)
+  const shortName = modelInfo.family.substring(0, 3) + modelInfo.parameterCount.replace("B", "");
+  
+  modelInfoDiv.innerHTML = `
+    <div class="compact-info">
+      <span class="model-short-name">${shortName}</span>
+      <span class="info-item">${modelInfo.estimatedMemory}</span>
+      <span class="info-item ${modelInfo.estimatedSpeed.toLowerCase()}">${modelInfo.estimatedSpeed}</span>
+      <span class="info-item">${modelInfo.parameterCount}</span>
+    </div>
+  `;
+}
+
+// Function to get real-time performance metrics from MLC engine
+async function getEngineMetrics(): Promise<any> {
+  try {
+    // Get basic engine state information
+    const engineState = {
+      isLoaded: engine !== null,
+      currentModel: selectedModel,
+      chatHistoryLength: chatHistory.length,
+      isGenerating: requestInProgress
+    };
+    
+    return {
+      engineState,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.log('Engine metrics not available:', error);
+    return null;
+  }
+}
+
+// Function to display real-time metrics
+function displayEngineMetrics(metrics: any) {
+  if (!metrics) return;
+  
+  let metricsDiv = document.getElementById("engine-metrics");
+  if (!metricsDiv) {
+    metricsDiv = document.createElement("div");
+    metricsDiv.id = "engine-metrics";
+    metricsDiv.className = "engine-metrics-compact";
+    
+    // Insert after model info
+    const modelInfo = document.getElementById("model-info");
+    if (modelInfo && modelInfo.parentNode) {
+      modelInfo.parentNode.insertBefore(metricsDiv, modelInfo.nextSibling);
+    }
+  }
+  
+  // let metricsHTML = `
+  //   <div class="compact-metrics">
+  //     <span class="metric-item ${metrics.engineState.isLoaded ? 'loaded' : 'not-loaded'}">
+  //       ${metrics.engineState.isLoaded ? '✓' : '✗'}
+  //     </span>
+  //     <span class="metric-item ${metrics.engineState.isGenerating ? 'generating' : 'idle'}">
+  //       ${metrics.engineState.isGenerating ? 'Generating' : 'Idle'}
+  //     </span>
+  //     <span class="metric-item">${metrics.engineState.chatHistoryLength} msgs</span>
+  //   </div>
+  // `;
+  
+  // metricsDiv.innerHTML = metricsHTML;
+}
+
+// Update metrics periodically
+setInterval(async () => {
+  if (!isLoadingParams && engine) {
+    const metrics = await getEngineMetrics();
+    // displayEngineMetrics(metrics);
+  }
+}, 5000); // Update every 5 seconds
 
 

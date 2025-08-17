@@ -104,6 +104,8 @@ body {
   color: #666;
 }
 
+
+
 .input-container {
   display: flex;
   gap: 10px;
@@ -595,4 +597,108 @@ body {
 .message-action-btn:focus-visible {
   outline: 2px solid #007bff;
   outline-offset: 2px;
+}
+
+/* Model Info Styles - Compact Version */
+.model-info-compact {
+  margin: 10px 0;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 0.85em;
+}
+
+.compact-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.model-short-name {
+  font-weight: 700;
+  color: #495057;
+  background: #e9ecef;
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.info-item {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.info-item.fast {
+  color: #28a745;
+}
+
+.info-item.medium {
+  color: #ffc107;
+}
+
+.info-item.slow {
+  color: #dc3545;
+}
+
+/* Responsive adjustments for compact display */
+@media (max-width: 400px) {
+  .compact-info {
+    gap: 10px;
+  }
+  
+  .info-item {
+    font-size: 0.8em;
+  }
+}
+
+/* Engine Metrics Styles - Compact Version */
+.engine-metrics-compact {
+  margin: 5px 0;
+  padding: 6px 12px;
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 6px;
+  font-size: 0.8em;
+}
+
+.compact-metrics {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.metric-item {
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.metric-item.loaded {
+  color: #28a745;
+}
+
+.metric-item.not-loaded {
+  color: #dc3545;
+}
+
+.metric-item.generating {
+  color: #ffc107;
+}
+
+.metric-item.idle {
+  color: #6c757d;
+}
+
+/* Responsive adjustments for compact metrics */
+@media (max-width: 400px) {
+  .compact-metrics {
+    gap: 10px;
+  }
+  
+  .metric-item {
+    font-size: 0.75em;
+  }
 }
