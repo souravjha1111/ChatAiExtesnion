@@ -35,12 +35,66 @@ function getElementAndCheck(id: string): HTMLElement {
 const queryInput = getElementAndCheck("query-input")!;
 const submitButton = getElementAndCheck("submit-button")!;
 const modelName = getElementAndCheck("model-name");
+const themeToggle = getElementAndCheck("theme-toggle")!;
+const helpBtn = getElementAndCheck("help-btn")!;
+const helpModal = getElementAndCheck("help-modal")!;
+const closeHelpBtn = getElementAndCheck("close-help")!;
+const hamburgerBtn = getElementAndCheck("hamburger-btn")!;
+const hamburgerDropdown = getElementAndCheck("hamburger-dropdown")!;
 
-let modelDisplayName = "";
+// Theme management
+let currentTheme = localStorage.getItem('theme') || 'light';
+
+// Function to set theme
+function setTheme(theme: string) {
+  currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  
+  // Update theme toggle button icon with smooth transition
+  const icon = themeToggle.querySelector('i');
+  if (icon) {
+    icon.style.transition = 'transform 0.3s ease';
+    icon.style.transform = 'rotate(180deg)';
+    
+    setTimeout(() => {
+      icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      icon.style.transform = 'rotate(0deg)';
+    }, 150);
+  }
+  
+  // Update theme toggle button title
+  themeToggle.title = `Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`;
+  
+  // Add a subtle animation to the container
+  const container = document.querySelector('.container') as HTMLElement;
+  if (container) {
+    container.style.transition = 'all 0.3s ease';
+  }
+}
+
+// Function to toggle theme
+function toggleTheme() {
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  setTheme(newTheme);
+}
+
+// Initialize theme
+setTheme(currentTheme);
+
+// Ensure help modal is hidden on page load
+helpModal.style.display = "none";
 
 // Initialize the extension
 
+// Disable submit button during loading
 (<HTMLButtonElement>submitButton).disabled = true;
+
+// Add loading-disabled class to all interactive elements
+const interactiveElements = document.querySelectorAll('button, select, input');
+interactiveElements.forEach(element => {
+  element.classList.add('loading-disabled');
+});
 
 let progressBar: ProgressBar = new Line("#loadingContainer", {
   strokeWidth: 4,
@@ -56,6 +110,7 @@ let isLoadingParams = true;
 
 let initProgressCallback = (report: InitProgressReport) => {
   setLabel("init-label", report.text);
+  
   progressBar.animate(report.progress, {
     duration: 50,
   });
@@ -106,12 +161,14 @@ for (const modelId of availableModels) {
 
 // Display initial model info
 displayModelInfo(selectedModel);
+const initialModelInfo = extractModelInfo(selectedModel);
 
-modelName.innerText = "Loading initial model...";
+modelName.innerText = "Loading initial model, features are paused until loading is complete";
+
 const engine: MLCEngineInterface = await CreateMLCEngine(selectedModel, {
   initProgressCallback: initProgressCallback,
 });
-modelName.innerText = "Now chatting with " + modelDisplayName;
+modelName.innerText = "Now chatting with " + initialModelInfo.family;
 
 let chatHistory: ChatCompletionMessageParam[] = [];
 
@@ -163,25 +220,27 @@ function enableInputs() {
   initLabel?.remove();
   const loadingBarContainer = document.getElementById("loadingContainer")!;
   loadingBarContainer?.remove();
+  
+  // Remove loading-disabled class from all interactive elements
+  const interactiveElements = document.querySelectorAll('button, select, input');
+  interactiveElements.forEach(element => {
+    element.classList.remove('loading-disabled');
+  });
+  
+  // Enable submit button if input is not empty
+  (<HTMLButtonElement>submitButton).disabled = (<HTMLInputElement>queryInput).value === "";
+  
   queryInput.focus();
-
-  const modelNameArray = selectedModel.split("-");
-  modelDisplayName = modelNameArray[0];
-  let j = 1;
-  while (j < modelNameArray.length && modelNameArray[j][0] != "q") {
-    modelDisplayName = modelDisplayName + "-" + modelNameArray[j];
-    j++;
-  }
 }
 
 let requestInProgress = false;
 
 // Disable submit button if input field is empty
 queryInput.addEventListener("keyup", () => {
+  // Only disable based on empty input or request in progress, not loading state
   (<HTMLButtonElement>submitButton).disabled = 
     (<HTMLInputElement>queryInput).value === "" || 
-    requestInProgress || 
-    isLoadingParams;
+    requestInProgress;
 });
 
 // If user presses enter, click submit button
@@ -192,13 +251,138 @@ queryInput.addEventListener("keyup", (event) => {
   }
 });
 
+// Keyboard shortcuts
+document.addEventListener("keydown", (event) => {
+  // Escape to clear input
+  if (event.key === "Escape") {
+    event.preventDefault();
+    if ((queryInput as HTMLInputElement).value.trim()) {
+      (queryInput as HTMLInputElement).value = "";
+      queryInput.focus();
+    }
+  }
+  
+  // Ctrl+/ to focus input
+  if (event.ctrlKey && event.key === "/") {
+    event.preventDefault();
+    queryInput.focus();
+    (queryInput as HTMLInputElement).select();
+  }
+  
+  // Ctrl+K to clear chat
+  if (event.ctrlKey && event.key === "k") {
+    event.preventDefault();
+    if (!requestInProgress) {
+      clearChat();
+    }
+  }
+});
+
+// Theme toggle event listener
+themeToggle.addEventListener("click", (event) => {
+  event.stopPropagation(); // Prevent the click from being detected by the document click handler
+  toggleTheme();
+  hamburgerDropdown.classList.add("hidden"); // Close the dropdown after clicking a menu item
+});
+
+// Help modal functions
+function showHelpModal() {
+  helpModal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function hideHelpModal() {
+  helpModal.style.display = "none";
+  document.body.style.overflow = "auto";
+}
+
+// Help modal event listeners
+helpBtn.addEventListener("click", (event) => {
+  event.stopPropagation(); // Prevent the click from being detected by the document click handler
+  showHelpModal();
+  hamburgerDropdown.classList.add("hidden"); // Close the dropdown after clicking a menu item
+});
+closeHelpBtn.addEventListener("click", hideHelpModal);
+
+// Close help modal when clicking outside
+helpModal.addEventListener("click", (event) => {
+  if (event.target === helpModal) {
+    hideHelpModal();
+  }
+});
+
+// Hamburger menu functions
+function toggleHamburgerMenu() {
+  hamburgerDropdown.classList.toggle("hidden");
+}
+
+// Hamburger menu event listeners
+hamburgerBtn.addEventListener("click", (event) => {
+  event.stopPropagation();
+  toggleHamburgerMenu();
+});
+
+// Close hamburger dropdown when clicking outside
+document.addEventListener("click", (event) => {
+  if (!hamburgerDropdown.classList.contains("hidden") && 
+      !hamburgerDropdown.contains(event.target as Node) && 
+      event.target !== hamburgerBtn) {
+    hamburgerDropdown.classList.add("hidden");
+  }
+});
+
+// Close hamburger dropdown with Escape key
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !hamburgerDropdown.classList.contains("hidden")) {
+    hamburgerDropdown.classList.add("hidden");
+  }
+});
+
+// Close help modal with Escape key
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && helpModal.style.display === "flex") {
+    hideHelpModal();
+  }
+});
+
+// Model stats button functionality
+const modelStatsBtn = getElementAndCheck("model-stats-btn")!;
+const modelStatsPanel = getElementAndCheck("model-stats-panel")!;
+
+// Toggle model stats panel visibility
+function toggleModelStats() {
+  if (modelStatsPanel.classList.contains("hidden")) {
+    modelStatsPanel.classList.remove("hidden");
+    modelStatsBtn.classList.add("active");
+  } else {
+    modelStatsPanel.classList.add("hidden");
+    modelStatsBtn.classList.remove("active");
+  }
+}
+
+// Add event listener to model stats button
+modelStatsBtn.addEventListener("click", (event) => {
+  event.stopPropagation(); // Prevent the click from being detected by the document click handler
+  toggleModelStats();
+  hamburgerDropdown.classList.add("hidden"); // Close the dropdown after clicking a menu item
+});
+
+// Close model stats panel when clicking outside
+document.addEventListener("click", (event) => {
+  if (!modelStatsPanel.classList.contains("hidden") && 
+      !modelStatsBtn.contains(event.target as Node) && 
+      !modelStatsPanel.contains(event.target as Node)) {
+    modelStatsPanel.classList.add("hidden");
+    modelStatsBtn.classList.remove("active");
+  }
+});
+
 // Listen for clicks on submit button
 async function handleClick() {
   requestInProgress = true;
   (<HTMLButtonElement>submitButton).disabled = true;
 
   const message = (<HTMLInputElement>queryInput).value;
-  document.getElementById("loading-indicator")!.style.display = "block";
 
 
 
@@ -267,8 +451,8 @@ submitButton.addEventListener("click", handleClick);
 
 // listen for changes in modelSelector
 async function handleSelectChange() {
-  if (isLoadingParams) return;
-
+  // Remove the early return to allow model changes during loading
+  
   modelName.innerText = "";
 
   const initLabel = document.createElement("p");
@@ -282,7 +466,14 @@ async function handleSelectChange() {
   loadingBox.appendChild(loadingContainer);
 
   isLoadingParams = true;
+  // Disable submit button during loading
   (<HTMLButtonElement>submitButton).disabled = true;
+  
+  // Add loading-disabled class to all interactive elements
+  const interactiveElements = document.querySelectorAll('button, select, input');
+  interactiveElements.forEach(element => {
+    element.classList.add('loading-disabled');
+  });
 
   if (requestInProgress) {
     engine.interruptGenerate();
@@ -317,6 +508,7 @@ async function handleSelectChange() {
 
   initProgressCallback = (report: InitProgressReport) => {
     setLabel("init-label", report.text);
+    
     progressBar.animate(report.progress, {
       duration: 50,
     });
@@ -331,7 +523,8 @@ async function handleSelectChange() {
   modelName.innerText = "Reloading with new model...";
   await engine.reload(selectedModel);
   requestInProgress = false;
-  modelName.innerText = "Now chatting with " + modelDisplayName;
+  const modelInfo = extractModelInfo(selectedModel);
+  modelName.innerText = "Now chatting with " + modelInfo.family;
 }
 modelSelector.addEventListener("change", handleSelectChange);
 
@@ -393,9 +586,6 @@ function clearChat() {
   enhancedChatHistory = [];
   messageMapping = {}; // Reset message mapping
   updateChatHistory();
-  document.getElementById("loading-indicator")!.style.display = "none";
-  
-
   
   queryInput.focus();
 }
@@ -830,33 +1020,14 @@ function extractModelInfo(modelId: string): ModelInfo {
 function displayModelInfo(modelId: string) {
   const modelInfo = extractModelInfo(modelId);
   
-
+  // Update model stats panel content
+  const modelSizeElem = document.getElementById("model-size");
+  const modelParamsElem = document.getElementById("model-params");
+  const modelTypeElem = document.getElementById("model-type");
   
-  // Create or update model info display
-  let modelInfoDiv = document.getElementById("model-info");
-  if (!modelInfoDiv) {
-    modelInfoDiv = document.createElement("div");
-    modelInfoDiv.id = "model-info";
-    modelInfoDiv.className = "model-info-compact";
-    
-    // Insert after model selector
-    const modelSelector = document.getElementById("model-selection");
-    if (modelSelector && modelSelector.parentNode) {
-      modelSelector.parentNode.insertBefore(modelInfoDiv, modelSelector.nextSibling);
-    }
-  }
-  
-  // Create shortened model name (5-6 characters)
-  const shortName = modelInfo.family.substring(0, 3) + modelInfo.parameterCount.replace("B", "");
-  
-  modelInfoDiv.innerHTML = `
-    <div class="compact-info">
-      <span class="model-short-name">${shortName}</span>
-      <span class="info-item">${modelInfo.estimatedMemory}</span>
-      <span class="info-item ${modelInfo.estimatedSpeed.toLowerCase()}">${modelInfo.estimatedSpeed}</span>
-      <span class="info-item">${modelInfo.parameterCount}</span>
-    </div>
-  `;
+  if (modelSizeElem) modelSizeElem.textContent = `Size: ${modelInfo.estimatedMemory}`;
+  if (modelParamsElem) modelParamsElem.textContent = `Parameters: ${modelInfo.parameterCount}`;
+  if (modelTypeElem) modelTypeElem.textContent = `Type: ${modelInfo.family} (${modelInfo.quantization})`;
 }
 
 // Function to get real-time performance metrics from MLC engine
