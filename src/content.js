@@ -51,7 +51,20 @@ function createCommentDiv() {
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'smart-comment-result' && msg.comment) {
     showCommentDiv();
-    updateCommentContent(msg.comment);
+    
+    // If it's the initial "Generating..." message or a streaming update
+    if (msg.comment === 'Generating...' || !msg.isComplete) {
+      // For the initial message, just show it
+      if (msg.comment === 'Generating...') {
+        document.getElementById('comment-content').innerHTML = msg.comment;
+      } else {
+        // For streaming updates, update the content directly without animation
+        document.getElementById('comment-content').innerHTML = msg.comment;
+      }
+    } else {
+      // For the final complete message, use the word-by-word animation
+      updateCommentContent(msg.comment);
+    }
   }
 });
 
@@ -81,10 +94,12 @@ function showCommentDiv() {
   document.getElementById('comment-content').innerHTML = 'Generating comment...';
 }
 
-// Update comment content
+// Update comment content with word-by-word animation
 function updateCommentContent(comment) {
   const contentDiv = document.getElementById('comment-content');
   if (contentDiv) {
+    // For the final complete message, we don't need animation since we've been
+    // streaming the updates already
     contentDiv.innerHTML = comment;
   }
 }

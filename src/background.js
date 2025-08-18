@@ -45,7 +45,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     console.log('[BG] Forwarding comment result to content script:', msg.comment);
     chrome.tabs.sendMessage(msg.tabId, {
       type: 'smart-comment-result',
-      comment: msg.comment
+      comment: msg.comment,
+      isComplete: msg.isComplete
     });
   }
 });

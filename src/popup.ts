@@ -533,29 +533,51 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
   if (msg.type === 'generate-smart-comment-popup' && msg.text && msg.tabId) {
     console.log('[POPUP] Received smart comment request from background:', msg);
     
+    // First, send an initial message to show the comment div with "Generating..." text
+    chrome.runtime.sendMessage({
+      type: 'smart-comment-result-popup',
+      comment: 'Generating...',
+      tabId: msg.tabId
+    });
+    
     // Prepare the prompt for strict comment generation
     const prompt = `Generate a smart, engaging comment for the following text. The comment should be thoughtful, relevant, and add value to the conversation. Return ONLY the comment text and nothing else. Do not include any explanations, quotes, or additional text.
 
 Text: "${msg.text}"`;
     
     try {
+      // Use streaming to get word-by-word results
       const completion = await engine.chat.completions.create({
-        stream: false,
+        stream: true,
         messages: [
           { role: "user", content: prompt }
         ]
       });
       
       let comment = "";
-      if (completion.choices && completion.choices[0] && completion.choices[0].message && completion.choices[0].message.content) {
-        comment = completion.choices[0].message.content.trim();
+      
+      // Process the stream chunks
+      for await (const chunk of completion) {
+        const curDelta = chunk.choices[0].delta.content;
+        if (curDelta) {
+          comment += curDelta;
+          
+          // Send each update to the background script
+          chrome.runtime.sendMessage({
+            type: 'smart-comment-result-popup',
+            comment: comment,
+            tabId: msg.tabId,
+            isComplete: false
+          });
+        }
       }
       
-      // Send the comment back to the background script
+      // Send the final complete message
       chrome.runtime.sendMessage({
         type: 'smart-comment-result-popup',
         comment: comment,
-        tabId: msg.tabId
+        tabId: msg.tabId,
+        isComplete: true
       });
       
       console.log('[POPUP] Sent comment result to background:', comment);
@@ -563,7 +585,8 @@ Text: "${msg.text}"`;
       chrome.runtime.sendMessage({
         type: 'smart-comment-result-popup',
         comment: 'Error generating comment. Please try again.',
-        tabId: msg.tabId
+        tabId: msg.tabId,
+        isComplete: true
       });
       console.error('[POPUP] Error generating comment:', e);
     }
