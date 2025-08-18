@@ -142,32 +142,51 @@ const availableModels = [
   "Qwen2-4B-Instruct-q4f16_1-MLC"
 ];
 
-// initially selected model
-let selectedModel = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
+// initially selected models
+let selectedChatModel = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
+let selectedCommentModel = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
 
-// populate model-selection
-const modelSelector = getElementAndCheck(
+// populate model-selection for chat
+const chatModelSelector = getElementAndCheck(
   "model-selection",
 ) as HTMLSelectElement;
 
-// Filter and add only the specified models
+// populate model-selection for comments
+const commentModelSelector = getElementAndCheck(
+  "comment-model-selection",
+) as HTMLSelectElement;
+
+// Filter and add only the specified models for both selectors
 for (const modelId of availableModels) {
-  const opt = document.createElement("option");
-  opt.value = modelId;
-  opt.innerHTML = modelId;
-  opt.selected = modelId === selectedModel;
-  modelSelector.appendChild(opt);
+  // Add to chat model selector
+  const chatOpt = document.createElement("option");
+  chatOpt.value = modelId;
+  chatOpt.innerHTML = modelId;
+  chatOpt.selected = modelId === selectedChatModel;
+  chatModelSelector.appendChild(chatOpt);
+  
+  // Add to comment model selector
+  const commentOpt = document.createElement("option");
+  commentOpt.value = modelId;
+  commentOpt.innerHTML = modelId;
+  commentOpt.selected = modelId === selectedCommentModel;
+  commentModelSelector.appendChild(commentOpt);
 }
 
 // Display initial model info
-displayModelInfo(selectedModel);
-const initialModelInfo = extractModelInfo(selectedModel);
+displayModelInfo(selectedChatModel);
+const initialModelInfo = extractModelInfo(selectedChatModel);
 
 modelName.innerText = "Loading initial model, features are paused until loading is complete";
 
-const engine: MLCEngineInterface = await CreateMLCEngine(selectedModel, {
+// Initialize the chat model engine
+const chatEngine: MLCEngineInterface = await CreateMLCEngine(selectedChatModel, {
   initProgressCallback: initProgressCallback,
 });
+
+// Initialize the comment model engine (we'll load this on demand to save resources)
+let commentEngine: MLCEngineInterface | null = null;
+
 modelName.innerText = "Now chatting with " + initialModelInfo.family;
 
 let chatHistory: ChatCompletionMessageParam[] = [];
@@ -379,12 +398,18 @@ document.addEventListener("click", (event) => {
 
 // Listen for clicks on submit button
 async function handleClick() {
+  if (requestInProgress) {
+    chatEngine.interruptGenerate();
+    requestInProgress = false;
+    (<HTMLButtonElement>submitButton).disabled = false;
+    return;
+  }
+
   requestInProgress = true;
   (<HTMLButtonElement>submitButton).disabled = true;
 
   const message = (<HTMLInputElement>queryInput).value;
-
-
+  if (message.trim() === "") return;
 
   // Add user message with timestamp
   const userMessage: ChatMessage = {
@@ -415,33 +440,40 @@ async function handleClick() {
   enhancedChatHistory.push(assistantMessage);
   updateChatHistory();
 
-  let curMessage = "";
-  const completion = await engine.chat.completions.create({
-    stream: true,
-    messages: chatHistory,
-  });
-  
-  for await (const chunk of completion) {
-    const curDelta = chunk.choices[0].delta.content;
-    if (curDelta) {
-      curMessage += curDelta;
-      // Update the assistant message content in real-time
-      assistantMessage.content = curMessage;
-      updateMessageContent(assistantMessage.id, assistantMessage.content); // Update mapping
-      updateChatHistory();
+  try {
+    let curMessage = "";
+    const completion = await chatEngine.chat.completions.create({
+      stream: true,
+      messages: chatHistory,
+    });
+    
+    for await (const chunk of completion) {
+      const curDelta = chunk.choices[0].delta.content;
+      if (curDelta) {
+        curMessage += curDelta;
+        // Update the assistant message content in real-time
+        assistantMessage.content = curMessage;
+        updateMessageContent(assistantMessage.id, assistantMessage.content); // Update mapping
+        updateChatHistory();
+      }
     }
+    
+    const response = await chatEngine.getMessage();
+    
+    // Update final response
+    assistantMessage.content = response;
+    updateMessageContent(assistantMessage.id, assistantMessage.content); // Update mapping
+    chatHistory.push({ role: "assistant", content: response });
+    updateChatHistory();
+  } catch (error) {
+    console.error("Error generating response:", error);
+    assistantMessage.content = "Error generating response. Please try again.";
+    updateMessageContent(assistantMessage.id, assistantMessage.content);
+    updateChatHistory();
+  } finally {
+    requestInProgress = false;
+    (<HTMLButtonElement>submitButton).disabled = false;
   }
-  
-  const response = await engine.getMessage();
-  
-  // Update final response
-  assistantMessage.content = response;
-  updateMessageContent(assistantMessage.id, assistantMessage.content); // Update mapping
-  chatHistory.push({ role: "assistant", content: response });
-  updateChatHistory();
-
-  requestInProgress = false;
-  (<HTMLButtonElement>submitButton).disabled = false;
 }
 submitButton.addEventListener("click", handleClick);
 
@@ -449,8 +481,8 @@ submitButton.addEventListener("click", handleClick);
 
 
 
-// listen for changes in modelSelector
-async function handleSelectChange() {
+// listen for changes in chat model selector
+async function handleChatModelChange() {
   // Remove the early return to allow model changes during loading
   
   modelName.innerText = "";
@@ -476,9 +508,9 @@ async function handleSelectChange() {
   });
 
   if (requestInProgress) {
-    engine.interruptGenerate();
+    chatEngine.interruptGenerate();
   }
-  engine.resetChat();
+  chatEngine.resetChat();
   chatHistory = [];
   enhancedChatHistory = [];
   messageMapping = {}; // Reset message mapping
@@ -487,12 +519,12 @@ async function handleSelectChange() {
 
   
 
-  await engine.unload();
+  await chatEngine.unload();
 
-  selectedModel = modelSelector.value;
+  selectedChatModel = chatModelSelector.value;
   
   // Display model info for the newly selected model
-  displayModelInfo(selectedModel);
+  displayModelInfo(selectedChatModel);
   
 
 
@@ -517,16 +549,26 @@ async function handleSelectChange() {
     }
   };
 
-  engine.setInitProgressCallback(initProgressCallback);
+  chatEngine.setInitProgressCallback(initProgressCallback);
 
   requestInProgress = true;
   modelName.innerText = "Reloading with new model...";
-  await engine.reload(selectedModel);
+  await chatEngine.reload(selectedChatModel);
   requestInProgress = false;
-  const modelInfo = extractModelInfo(selectedModel);
+  const modelInfo = extractModelInfo(selectedChatModel);
   modelName.innerText = "Now chatting with " + modelInfo.family;
 }
-modelSelector.addEventListener("change", handleSelectChange);
+chatModelSelector.addEventListener("change", handleChatModelChange);
+
+// Function to handle comment model selection change
+commentModelSelector.addEventListener("change", function() {
+  selectedCommentModel = commentModelSelector.value;
+  // We'll load this model on demand when generating comments
+  // If the model is already loaded, we'll unload it to save resources
+  if (commentEngine) {
+    commentEngine = null;
+  }
+});
 
 // Listen for smart comment generation requests from background script
 chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
@@ -546,8 +588,23 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
 Text: "${msg.text}"`;
     
     try {
+      // Load the comment model if needed
+      if (!commentEngine) {
+        console.log('[POPUP] Loading comment model:', selectedCommentModel);
+        commentEngine = await CreateMLCEngine(selectedCommentModel, {
+          initProgressCallback: (report) => {
+            chrome.runtime.sendMessage({
+              type: 'smart-comment-result-popup',
+              comment: `Loading model (${Math.round(report.progress * 100)}%)...`,
+              tabId: msg.tabId,
+              isComplete: false
+            });
+          }
+        });
+      }
+      
       // Use streaming to get word-by-word results
-      const completion = await engine.chat.completions.create({
+      const completion = await commentEngine.chat.completions.create({
         stream: true,
         messages: [
           { role: "user", content: prompt }
@@ -1058,8 +1115,10 @@ async function getEngineMetrics(): Promise<any> {
   try {
     // Get basic engine state information
     const engineState = {
-      isLoaded: engine !== null,
-      currentModel: selectedModel,
+      isLoaded: chatEngine !== null,
+      currentChatModel: selectedChatModel,
+      currentCommentModel: selectedCommentModel,
+      commentEngineLoaded: commentEngine !== null,
       chatHistoryLength: chatHistory.length,
       isGenerating: requestInProgress
     };

@@ -35,9 +35,54 @@
                 <i class="fa-solid fa-chart-bar"></i>
                 <span>Model Stats</span>
               </button>
+              <div class="dropdown-divider"></div>
+              <div class="comment-model-section">
+                <span class="dropdown-label">Comment Generation Model:</span>
+                <select id="comment-model-selection" class="dropdown-select"></select>
+              </div>
             </div>
           </div>
         </div>
+        <style>
+          .hamburger-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            min-width: 200px;
+          }
+          
+          .dropdown-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 8px 0;
+          }
+          
+          .comment-model-section {
+            padding: 8px 12px;
+          }
+          
+          .dropdown-label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: var(--text-color);
+          }
+          
+          .dropdown-select {
+            width: 100%;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+            font-size: 12px;
+          }
+        </style>
         <div id="loadingBox">
           <p id="init-label">Initializing model...</p>
           <div id="loadingContainer"></div>
