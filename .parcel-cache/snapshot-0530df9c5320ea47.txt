@@ -1,4 +1,4 @@
-4354
+4385
 67C:\Users\souravjha\Desktop\learn\llm\adblock\src\icons\icon-128.png133959401991537568 0
 77C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\micromatch\index.js133998998538533388 0
 83C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\utils\src\svgo.js133998998556812217 0
@@ -19,15 +19,15 @@
 75C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\dotenv-expand\lib133998998545937418 1
 112C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\test\fixtures\custom-targets\package.json133998998562362263 0
 99C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\type-fest\source\require-exactly-one.d.ts133998998551615042 0
-62C:\Users\souravjha\Desktop\learn\llm\adblock\package-lock.json133998998602059086 0
-55C:\Users\souravjha\Desktop\learn\llm\adblock\.gitignore133999011774363252 0
+62C:\Users\souravjha\Desktop\learn\llm\adblock\package-lock.json134008857562946820 0
+55C:\Users\souravjha\Desktop\learn\llm\adblock\.gitignore134008857562668973 0
 101C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\reporter-cli\lib\CLIReporter.js.map133998998550392520 0
 89C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\regions\KR.js133998998572274068 0
 97C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\dommatrix.js133998998565705263 0
 82C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\loglevel\demo\styles.css133998998539576489 0
 114C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_check_private_redeclaration\package.json133998998562380899 0
 55C:\Users\souravjha\Desktop\learn\llm\adblock\.env.local133999011774343248 0
-58C:\Users\souravjha\Desktop\learn\llm\adblock\src\popup.css133999100916888826 0
+58C:\Users\souravjha\Desktop\learn\llm\adblock\src\popup.css134008857562979806 0
 85C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\regenerator-runtime\path.js133998998538225226 0
 52C:\Users\souravjha\Desktop\learn\llm\adblock\.vercel133999011579335099 1
 100C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\lib\requests\DevDepRequest.js133998998555992347 0
@@ -37,7 +37,7 @@
 103C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\transformer-postcss\lib\loadConfig.js133998998541613210 0
 117C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lmdb\dependencies\lmdb-data-v1\libraries\liblmdb\mdb_stat.1133998998551124964 0
 79C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\call-bound\index.d.ts133998998546987447 0
-49C:\Users\souravjha\Desktop\learn\llm\adblock\dist133999855435324634 1
+49C:\Users\souravjha\Desktop\learn\llm\adblock\dist134008878298278016 1
 92C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\type-fest\source\package-json.d.ts133998998550753122 0
 89C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\regions\LA.js133998998572384856 0
 104C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\transformer-js\lib\esmodule-helpers.js133998998538623356 0
@@ -78,7 +78,7 @@
 106C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\font-unicode-range.js133998998567452408 0
 115C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lmdb\dependencies\lmdb-data-v1\libraries\liblmdb\mtest3.c133998998556782272 0
 83C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\dotenv-expand\lib\main.js133998998539556473 0
-48C:\Users\souravjha\Desktop\learn\llm\adblock\src133999000579175133 1
+48C:\Users\souravjha\Desktop\learn\llm\adblock\src134008863420205432 1
 103C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\runtime-js\src\helpers\.eslintrc.json133998998552578863 0
 90C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\esm\_ts_metadata.js133998998561379672 0
 66C:\Users\souravjha\Desktop\learn\llm\adblock\src\icons\icon-16.png133959401991537568 0
@@ -86,7 +86,7 @@
 93C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\math-intrinsics\.github\FUNDING.yml133998998551939450 0
 106C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\css-featurequeries.js133998998560906176 0
 84C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\shifty\dist\token.d.ts.map133998998551687209 0
-62C:\Users\souravjha\Desktop\learn\llm\adblock\src\background.js133999645372093334 0
+62C:\Users\souravjha\Desktop\learn\llm\adblock\src\background.js134008858244167142 0
 81C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\es-errors\test\index.js133998998542103787 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\color-name133998998540419947 1
 83C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lodash.merge\package.json133998998537196263 0
@@ -95,7 +95,7 @@
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\type-fest\ts41\snake-case.d.ts133998998552024245 0
 76C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\logger\src133998998539746520 1
 74C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\qs\.editorconfig133998998537156255 0
-59C:\Users\souravjha\Desktop\learn\llm\adblock\src\popup.html133999835336548857 0
+59C:\Users\souravjha\Desktop\learn\llm\adblock\src\popup.html134008863420188886 0
 77C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\shifty\src\scene.js133998998546255054 0
 87C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\weak-lru-cache\LRFUExpirer.js133998998541267964 0
 89C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\regions\DO.js133998998565447843 0
@@ -123,9 +123,9 @@
 85C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\object-inspect\test\browser133998998546635075 1
 87C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\cjs\_extends.cjs133998998553460584 0
 93C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_non_iterable_spread133998998565295612 1
-66C:\Users\souravjha\Desktop\learn\llm\adblock\src\popup-loading.css133999000580943086 0
+66C:\Users\souravjha\Desktop\learn\llm\adblock\src\popup-loading.css134008857562978506 0
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\semver\internal\identifiers.js133998998549265492 0
-59C:\Users\souravjha\Desktop\learn\llm\adblock\src\content.js133999645497300092 0
+59C:\Users\souravjha\Desktop\learn\llm\adblock\src\content.js134008858244189172 0
 54C:\Users\souravjha\Desktop\learn\llm\adblock\src\icons133959401991619261 1
 81C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\optimizer-image133998998539496475 1
 104C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lmdb\node_modules\node-addon-api\noexcept.gypi133998998541823812 0
@@ -144,7 +144,7 @@
 84C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\side-channel-list\index.js133998998541853796 0
 107C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@mlc-ai\web-llm\lib\extension_service_worker.d.ts133998998561102612 0
 75C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\ieee754\README.md133998998540664158 0
-57C:\Users\souravjha\Desktop\learn\llm\adblock\src\popup.ts133999836808174902 0
+57C:\Users\souravjha\Desktop\learn\llm\adblock\src\popup.ts134008878154036633 0
 66C:\Users\souravjha\Desktop\learn\llm\adblock\src\icons\icon-32.png133959401991589165 0
 84C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\react-refresh\package.json133998998546385004 0
 78C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\json5\lib\index.d.ts133998998549550695 0
@@ -173,6 +173,7 @@
 96C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lmdb\node_modules\node-addon-api\tools133998998550252445 1
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\esm\_construct.js133998998559488218 0
 107C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lmdb\dependencies\lmdb\libraries\liblmdb\Makefile133998998549134315 0
+72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.7a4a7b57.js134008855928953277 0
 107C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\css-media-scripting.js133998998561971488 0
 65C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@mlc-ai133998998520949300 1
 95C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\type-fest\source\set-return-type.d.ts133998998551938822 0
@@ -266,6 +267,7 @@
 89C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\regions\IM.js133998998569842156 0
 80C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\get-proto\package.json133998998545917401 0
 104C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\view-transitions.js133998998579946855 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.329ab531.js134008878298233027 0
 74C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\semver\range.bnf133998998538215228 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\fill-range133998998540429977 1
 86C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\semver\classes\comparator.js133998998543420864 0
@@ -695,11 +697,12 @@
 95C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_decorate\package.json133998998564021942 0
 85C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\node-addon-api\node_api.gyp133998998539006543 0
 81C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\micromatch\package.json133998998539546473 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.9372b662.js134000053245178151 0
 106C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\html-media-capture.js133998998569482182 0
 99C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\optimizer-css\lib\CSSOptimizer.js133998998538654508 0
 78C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\side-channel\.github133998998547841665 1
 92C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\type-fest\ts41\delimiter-case.d.ts133998998548121545 0
-71C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-128.07b696c1.png133998999087001237 0
+71C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-128.07b696c1.png134008855927582303 0
 80C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\math-intrinsics\max.js133998998546935064 0
 80C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\term-size\package.json133998998546105020 0
 75C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\parcel\lib\bin.js133998998538533388 0
@@ -972,6 +975,7 @@
 94C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\msgpackr\dist\unpack-no-eval.cjs.map133998998554444905 0
 77C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\safe-buffer\LICENSE133998998537147005 0
 103C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\matchesselector.js133998998572905286 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.5194abb1.js134000053225956073 0
 89C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\regions\CO.js133998998558532111 0
 87C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\side-channel-map\CHANGELOG.md133998998546625002 0
 104C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lmdb\dependencies\lz4\lib\dll\example\Makefile133998998549510625 0
@@ -1292,6 +1296,7 @@
 93C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\object-inspect\package-support.json133998998551235409 0
 102C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_async_generator\package.json133998998562101497 0
 83C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\math-intrinsics\README.md133998998549931450 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.c7474161.js134008867351359468 0
 65C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\qs\test133998998548881052 1
 89C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\diagnostic\package.json133998998544412908 0
 99C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\import-maps.js133998998569942155 0
@@ -1396,6 +1401,7 @@
 74C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\rust\src133998998541117992 1
 87C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\utils\src\throttle.js133998998556912209 0
 76C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\picomatch\index.js133998998539616484 0
+72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.e28e35f1.js134000163845141906 0
 89C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\regions\VU.js133998998580060808 0
 90C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\src\ParcelConfig.js133998998559053513 0
 91C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\reporter-cli\src\emoji.js133998998547621667 0
@@ -1490,6 +1496,7 @@
 77C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\object-inspect\test133998998550989735 1
 113C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lmdb\dependencies\lmdb-data-v1\libraries\liblmdb\midl.c133998998555894690 0
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\object-inspect\test-core-js.js133998998550562371 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.fc61fa8a.html134003472077669368 0
 94C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\src\loadParcelPlugin.js133998998557920612 0
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\object-inspect\util.inspect.js133998998550903161 0
 89C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\object-inspect\test\circular.js133998998544962629 0
@@ -1891,6 +1898,7 @@
 84C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\workers\lib\bus.js133998998541433184 0
 117C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lmdb\dependencies\lmdb-data-v1\libraries\liblmdb\mdb_stat.c133998998553681106 0
 93C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\esm\_async_iterator.js133998998558365509 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.268f82a5.html134008875365499328 0
 83C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\cjs\_get.cjs133998998553631108 0
 113C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\lmdb\dependencies\lmdb-data-v1\libraries\liblmdb\midl.h133998998559132460 0
 92C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\webp.js133998998580756755 0
@@ -2127,6 +2135,7 @@
 81C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\escalade\sync\index.mjs133998998545007857 0
 80C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\escalade\dist\index.js133998998538553355 0
 99C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\utils\src\generateBuildMetrics.js133998998549996821 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.eed3a715.html134000739367330122 0
 81C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\escalade\dist\index.mjs133998998543450877 0
 83C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\es-object-atoms\.eslintrc133998998537236249 0
 83C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\chalk\source\templates.js133998998539586472 0
@@ -2702,7 +2711,7 @@
 102C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\css-page-break.js133998998562464132 0
 103C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\css-paged-media.js133998998562486078 0
 110C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\css-print-color-adjust.js133998998562677813 0
-70C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-16.e4dd4cff.png133998999088761495 0
+70C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-16.e4dd4cff.png134008855930017350 0
 77C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\base64-js\README.md133998998541963788 0
 99C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\css-regions.js133998998562907851 0
 101C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\caniuse-lite\data\features\dispatchevent.js133998998565315635 0
@@ -3178,6 +3187,7 @@
 107C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_wrap_async_generator\package.json133998998566572068 0
 92C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_using\package.json133998998566542087 0
 101C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\workers\lib\threads\ThreadsChild.js133998998552024245 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.22a89a14.js134000163864575242 0
 93C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_update\package.json133998998566451423 0
 96C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\transformer-react-refresh-wrap133998998546355018 1
 92C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\lib\public\Symbols.js133998998561062620 0
@@ -3243,6 +3253,7 @@
 111C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_class_private_field_init\package.json133998998563100475 0
 113C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\runtime-webextension\lib\WebExtensionRuntime.js133998998541633142 0
 110C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_class_private_field_get\package.json133998998563070502 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.ae0f2197.js134003472077807176 0
 103C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_class_call_check\package.json133998998562620889 0
 116C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_class_apply_descriptor_update\package.json133998998562546122 0
 97C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@swc\helpers\_\_call_super\package.json133998998562301487 0
@@ -3522,7 +3533,7 @@
 85C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\config-webextension133998998539196523 1
 76C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\diagnostic133998998543711978 1
 83C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\codeframe\LICENSE133998998537516282 0
-69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.51032597.js133998999089998706 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.51032597.js134008855931329641 0
 95C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\utils\test\DefaultMap.test.js133998998549370618 0
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\types-internal\scripts133998998548981048 1
 72C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\events133998998548445791 1
@@ -3881,6 +3892,7 @@
 92C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\reporter-cli\src\render.js133998998548515789 0
 86C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\profiler\build-ts.js133998998538473360 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.ea6196e3.html133998170999317638 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.6759de25.js134000163843807295 0
 78C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\profiler\lib133998998549560651 1
 82C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\profiler\LICENSE133998998537436258 0
 87C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\profiler\package.json133998998548545798 0
@@ -3937,6 +3949,7 @@
 104C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\package-manager\test\fixtures\packages133998998549450700 1
 127C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\package-manager\test\fixtures\packages\peers-2.0\package.json133998998552748839 0
 101C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\test\fixtures\config\subfolder133998998547921684 1
+68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.9f45acc7.css134000163842672259 0
 123C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\package-manager\test\fixtures\packages\peers\package.json133998998552828982 0
 96C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\test\fixtures\module-a.js133998998558134918 0
 125C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\package-manager\test\fixtures\packages\foo-2.0\package.json133998998552648852 0
@@ -4100,6 +4113,7 @@
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\lib\buildCache.js133998998552127847 0
 91C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\src\applyRuntimes.js133998998550242446 0
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\src\buildCache.js133998998552238936 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.9200c784.js134000667156602213 0
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\src\Dependency.js133998998555894690 0
 83C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\src\index.js133998998557126564 0
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@parcel\core\src\loadDotEnv.js133998998557800589 0
@@ -4208,6 +4222,7 @@
 94C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@lmdb\lmdb-win32-x64\node.abi93.node133998998550252445 0
 93C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@lmdb\lmdb-win32-x64\node.napi.node133998998551245028 0
 91C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@lmdb\lmdb-win32-x64\package.json133998998538175264 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.654be31d.js134001374756958556 0
 88C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@lmdb\lmdb-win32-x64\README.md133998998539216475 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@lezer\lr133998998546615005 1
 72C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\@lezer\lr\dist133998998547451696 1
@@ -4248,12 +4263,15 @@
 89C:\Users\souravjha\Desktop\learn\llm\adblock\node_modules\.bin\update-browserslist-db.cmd133998998581905668 0
 72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.1c1aef97.js133957412123397261 0
 72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.536ae520.js133947393013124507 0
+72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.83e0e140.js134003472058579528 0
 72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.98280091.js133999646039375122 0
 72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.9e0e256b.js133947349902305063 0
 72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.d0e4accf.js133947390743946631 0
 72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.ed5ed9d9.js133997370901845658 0
+72C:\Users\souravjha\Desktop\learn\llm\adblock\dist\background.eff4770c.js134000053224354022 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.0eec12d1.js133959398497379608 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.3e9878ca.js133957415692343988 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.40b867e4.js134000074523756298 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.62eacf9c.html133947390776054222 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.5bc526de.js133968758019204372 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.5bf76bfb.js133968725850857382 0
@@ -4261,24 +4279,30 @@
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.6bb03087.js133997369808761141 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.75d9b118.js133968724281903582 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.afd36897.js133947393013124507 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.c08f4632.js134003472058860788 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.d07ad4b6.js133947390743946870 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\content.d9bd5d4b.js133968711635019172 0
 70C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-16.d25a28d7.png133959066649876400 0
-70C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-32.3db4f69f.png133998999087001237 0
-70C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-64.c8956af4.png133998999088767120 0
+70C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-32.3db4f69f.png134008855927582303 0
+70C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-64.c8956af4.png134008855930012348 0
 70C:\Users\souravjha\Desktop\learn\llm\adblock\dist\icon-64.d25a28d7.png133959066649876400 0
-63C:\Users\souravjha\Desktop\learn\llm\adblock\dist\manifest.json133999855435008657 0
+63C:\Users\souravjha\Desktop\learn\llm\adblock\dist\manifest.json134008878297631799 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.0023b0b9.js133999001762084916 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.0750d3df.html133999099030926963 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.07e017ea.html133947393037426226 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.0ac08125.js133947393037795549 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.164368b1.js134000074538776052 0
+68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.20015cc0.css134008855927684915 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.205e02f0.css133998202795459756 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.25b6747c.js133998290071072001 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.2941eb62.html133998933590243914 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.2c8a4d20.js134008875365807822 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.2d884bd3.css133997419994355321 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.31d49829.html133999001160239574 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.31dea6c8.js133998939932810504 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.321ea925.html134000074538620132 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.361fba33.html133998156739966626 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.3ab67912.html134008878297596715 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.3bf8170c.html133998999108506615 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.430d0fdf.html133998196888208429 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.43292f3d.html133998202816779284 0
@@ -4296,8 +4320,10 @@
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.59e16658.html133997406568269762 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.5ca55420.js133999099031087352 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.5f3af496.html133998923795028008 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.655425bc.html134008855954642066 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.67144249.css133998109597758625 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.68dc11f4.js133998135932466997 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.69ec7abd.html134008867350998081 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.6a671f67.css133998999087049563 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.6b2a9be5.js133954037740756734 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.6d5f950c.js133999101694219222 0
@@ -4305,9 +4331,10 @@
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.6fe8b305.css133998172151727845 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.7054cecd.html133997369827503593 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.72961ddd.css133998158878640061 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.751cc07a.html134000053245022130 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.7985037f.html133999101694008050 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.7a4ea7a0.html133998158898854301 0
-68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.7abdcd2a.css133999001142976275 0
+68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.7abdcd2a.css134000163842672259 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.7bf9c57a.css133997406547501064 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.7c1ef297.js133998156740145861 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.7c724907.js133998205912501137 0
@@ -4319,6 +4346,7 @@
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.8f8d7644.js133968699267417678 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.e414cd77.html133997399787555755 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.8fd739b4.css133957412122562016 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.90481702.js134000739367481138 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.906a7beb.js133998207857008029 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.98b03ab7.css133999094764647365 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.9e55e9aa.css133998937366881352 0
@@ -4337,8 +4365,10 @@
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.cc814b12.css133947356424879931 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.cf947ac7.js133998174740518514 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.d0e54aa7.js133998193315846839 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.d2bd27f6.html134000163864415282 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.d6db94b3.css133998939903537810 0
 68C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.d8997051.css133998121888794048 0
+67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.d8a3fa78.js134008855954930821 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.dd11b45c.html133997425908656201 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.dee76698.html133998928992736717 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.e824d630.js133999646056517812 0
@@ -4352,4 +4382,5 @@
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.f6510fc7.js133957412149393954 0
 69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.f75ddd01.html133998121908550038 0
 67C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.fc8fd01a.js133997406568429506 0
+69C:\Users\souravjha\Desktop\learn\llm\adblock\dist\popup.ff08a7a0.html134000667156438696 0
 65C:\Users\souravjha\Desktop\learn\llm\adblock\.vercel\project.json133999011579294679 0

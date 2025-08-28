@@ -89,12 +89,14 @@ helpModal.style.display = "none";
 
 // Disable submit button during loading
 (<HTMLButtonElement>submitButton).disabled = true;
+console.log('[DEBUG] Submit button disabled during loading');
 
 // Add loading-disabled class to all interactive elements
 const interactiveElements = document.querySelectorAll('button, select, input');
 interactiveElements.forEach(element => {
   element.classList.add('loading-disabled');
 });
+console.log('[DEBUG] Loading disabled classes added to', interactiveElements.length, 'elements');
 
 let progressBar: ProgressBar = new Line("#loadingContainer", {
   strokeWidth: 4,
@@ -107,14 +109,17 @@ let progressBar: ProgressBar = new Line("#loadingContainer", {
 });
 
 let isLoadingParams = true;
+console.log('[DEBUG] isLoadingParams set to true');
 
 let initProgressCallback = (report: InitProgressReport) => {
+  console.log('[DEBUG] Progress report:', report);
   setLabel("init-label", report.text);
   
   progressBar.animate(report.progress, {
     duration: 50,
   });
   if (report.progress == 1.0) {
+    console.log('[DEBUG] Model loading complete, enabling inputs');
     enableInputs();
   }
 };
@@ -142,50 +147,56 @@ const availableModels = [
   "Qwen2-4B-Instruct-q4f16_1-MLC"
 ];
 
-// initially selected models
-let selectedChatModel = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
-let selectedCommentModel = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
+// initially selected model - use the smallest model for faster loading
+let selectedModel = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
 
-// populate model-selection for chat
-const chatModelSelector = getElementAndCheck(
+// populate model-selection
+const modelSelector = getElementAndCheck(
   "model-selection",
 ) as HTMLSelectElement;
 
-// populate model-selection for comments
-const commentModelSelector = getElementAndCheck(
-  "comment-model-selection",
-) as HTMLSelectElement;
-
-// Filter and add only the specified models for both selectors
+// Filter and add only the specified models
 for (const modelId of availableModels) {
-  // Add to chat model selector
-  const chatOpt = document.createElement("option");
-  chatOpt.value = modelId;
-  chatOpt.innerHTML = modelId;
-  chatOpt.selected = modelId === selectedChatModel;
-  chatModelSelector.appendChild(chatOpt);
-  
-  // Add to comment model selector
-  const commentOpt = document.createElement("option");
-  commentOpt.value = modelId;
-  commentOpt.innerHTML = modelId;
-  commentOpt.selected = modelId === selectedCommentModel;
-  commentModelSelector.appendChild(commentOpt);
+  const opt = document.createElement("option");
+  opt.value = modelId;
+  opt.innerHTML = modelId;
+  opt.selected = modelId === selectedModel;
+  modelSelector.appendChild(opt);
 }
 
 // Display initial model info
-displayModelInfo(selectedChatModel);
-const initialModelInfo = extractModelInfo(selectedChatModel);
+displayModelInfo(selectedModel);
+const initialModelInfo = extractModelInfo(selectedModel);
 
 modelName.innerText = "Loading initial model, features are paused until loading is complete";
 
-// Initialize the chat model engine
-const chatEngine: MLCEngineInterface = await CreateMLCEngine(selectedChatModel, {
-  initProgressCallback: initProgressCallback,
-});
+let engine: MLCEngineInterface;
+try {
+  console.log('[DEBUG] Creating MLC engine for model:', selectedModel);
+  engine = await CreateMLCEngine(selectedModel, {
+    initProgressCallback: initProgressCallback,
+  });
+  console.log('[DEBUG] MLC engine created successfully');
+} catch (error) {
+  console.error('[DEBUG] Error creating MLC engine:', error);
+  // Enable inputs even if engine creation fails
+  enableInputs();
+  throw error;
+}
 
-// Initialize the comment model engine (we'll load this on demand to save resources)
-let commentEngine: MLCEngineInterface | null = null;
+// Add a fallback timer to enable inputs if progress callback fails
+setTimeout(() => {
+  if (isLoadingParams) {
+    console.log('[DEBUG] Fallback: Enabling inputs after timeout');
+    enableInputs();
+  }
+}, 10000); // 10 second fallback
+
+// Add a debug function to manually enable inputs
+(window as any).debugEnableInputs = () => {
+  console.log('[DEBUG] Manually enabling inputs');
+  enableInputs();
+};
 
 modelName.innerText = "Now chatting with " + initialModelInfo.family;
 
@@ -229,6 +240,8 @@ function resetMessageContent(messageId: string) {
 
 
 function enableInputs() {
+  console.log('[DEBUG] enableInputs called');
+  
   if (isLoadingParams) {
     setTimeout(() => {
       isLoadingParams = false;
@@ -248,6 +261,9 @@ function enableInputs() {
   
   // Enable submit button if input is not empty
   (<HTMLButtonElement>submitButton).disabled = (<HTMLInputElement>queryInput).value === "";
+  
+  console.log('[DEBUG] Submit button disabled state:', (<HTMLButtonElement>submitButton).disabled);
+  console.log('[DEBUG] Loading disabled classes removed');
   
   queryInput.focus();
 }
@@ -398,8 +414,12 @@ document.addEventListener("click", (event) => {
 
 // Listen for clicks on submit button
 async function handleClick() {
+  console.log('[DEBUG] handleClick called');
+  console.log('[DEBUG] requestInProgress:', requestInProgress);
+  console.log('[DEBUG] submitButton disabled:', (<HTMLButtonElement>submitButton).disabled);
+  
   if (requestInProgress) {
-    chatEngine.interruptGenerate();
+    engine.interruptGenerate();
     requestInProgress = false;
     (<HTMLButtonElement>submitButton).disabled = false;
     return;
@@ -442,7 +462,7 @@ async function handleClick() {
 
   try {
     let curMessage = "";
-    const completion = await chatEngine.chat.completions.create({
+    const completion = await engine.chat.completions.create({
       stream: true,
       messages: chatHistory,
     });
@@ -458,7 +478,7 @@ async function handleClick() {
       }
     }
     
-    const response = await chatEngine.getMessage();
+    const response = await engine.getMessage();
     
     // Update final response
     assistantMessage.content = response;
@@ -481,8 +501,8 @@ submitButton.addEventListener("click", handleClick);
 
 
 
-// listen for changes in chat model selector
-async function handleChatModelChange() {
+// listen for changes in modelSelector
+async function handleSelectChange() {
   // Remove the early return to allow model changes during loading
   
   modelName.innerText = "";
@@ -508,9 +528,9 @@ async function handleChatModelChange() {
   });
 
   if (requestInProgress) {
-    chatEngine.interruptGenerate();
+    engine.interruptGenerate();
   }
-  chatEngine.resetChat();
+  engine.resetChat();
   chatHistory = [];
   enhancedChatHistory = [];
   messageMapping = {}; // Reset message mapping
@@ -519,12 +539,12 @@ async function handleChatModelChange() {
 
   
 
-  await chatEngine.unload();
+  await engine.unload();
 
-  selectedChatModel = chatModelSelector.value;
+  selectedModel = modelSelector.value;
   
   // Display model info for the newly selected model
-  displayModelInfo(selectedChatModel);
+  displayModelInfo(selectedModel);
   
 
 
@@ -549,26 +569,16 @@ async function handleChatModelChange() {
     }
   };
 
-  chatEngine.setInitProgressCallback(initProgressCallback);
+  engine.setInitProgressCallback(initProgressCallback);
 
   requestInProgress = true;
   modelName.innerText = "Reloading with new model...";
-  await chatEngine.reload(selectedChatModel);
+  await engine.reload(selectedModel);
   requestInProgress = false;
-  const modelInfo = extractModelInfo(selectedChatModel);
+  const modelInfo = extractModelInfo(selectedModel);
   modelName.innerText = "Now chatting with " + modelInfo.family;
 }
-chatModelSelector.addEventListener("change", handleChatModelChange);
-
-// Function to handle comment model selection change
-commentModelSelector.addEventListener("change", function() {
-  selectedCommentModel = commentModelSelector.value;
-  // We'll load this model on demand when generating comments
-  // If the model is already loaded, we'll unload it to save resources
-  if (commentEngine) {
-    commentEngine = null;
-  }
-});
+modelSelector.addEventListener("change", handleSelectChange);
 
 // Listen for smart comment generation requests from background script
 chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
@@ -588,23 +598,9 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
 Text: "${msg.text}"`;
     
     try {
-      // Load the comment model if needed
-      if (!commentEngine) {
-        console.log('[POPUP] Loading comment model:', selectedCommentModel);
-        commentEngine = await CreateMLCEngine(selectedCommentModel, {
-          initProgressCallback: (report) => {
-            chrome.runtime.sendMessage({
-              type: 'smart-comment-result-popup',
-              comment: `Loading model (${Math.round(report.progress * 100)}%)...`,
-              tabId: msg.tabId,
-              isComplete: false
-            });
-          }
-        });
-      }
-      
-      // Use streaming to get word-by-word results
-      const completion = await commentEngine.chat.completions.create({
+      // Use the main chat engine to generate comments
+      let curMessage = "";
+      const completion = await engine.chat.completions.create({
         stream: true,
         messages: [
           { role: "user", content: prompt }
@@ -649,10 +645,6 @@ Text: "${msg.text}"`;
     }
   }
 });
-
-
-
-
 
 // Clear chat functionality
 const clearChatButton = getElementAndCheck("clear-chat") as HTMLButtonElement;
@@ -1115,10 +1107,9 @@ async function getEngineMetrics(): Promise<any> {
   try {
     // Get basic engine state information
     const engineState = {
-      isLoaded: chatEngine !== null,
-      currentChatModel: selectedChatModel,
-      currentCommentModel: selectedCommentModel,
-      commentEngineLoaded: commentEngine !== null,
+      isLoaded: engine !== null,
+      currentModel: selectedModel,
+      
       chatHistoryLength: chatHistory.length,
       isGenerating: requestInProgress
     };
