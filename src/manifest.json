@@ -28,5 +28,11 @@
   },
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["comment-generator.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

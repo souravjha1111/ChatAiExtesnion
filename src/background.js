@@ -44,7 +44,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     // Forward the comment result from popup to the correct tab/content script
     console.log('[BG] Forwarding comment result to content script:', msg.comment);
     chrome.tabs.sendMessage(msg.tabId, {
-      type: 'smart-comment-result',
+      type: 'smart-comment-result-popup',
       comment: msg.comment,
       isComplete: msg.isComplete
     });

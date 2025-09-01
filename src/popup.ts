@@ -32,8 +32,8 @@ function getElementAndCheck(id: string): HTMLElement {
 
 
 
-const queryInput = getElementAndCheck("query-input")!;
-const submitButton = getElementAndCheck("submit-button")!;
+const queryInput = getElementAndCheck("query-input") as HTMLInputElement;
+const submitButton = getElementAndCheck("submit-button") as HTMLButtonElement;
 const modelName = getElementAndCheck("model-name");
 const themeToggle = getElementAndCheck("theme-toggle")!;
 const helpBtn = getElementAndCheck("help-btn")!;
@@ -167,6 +167,13 @@ for (const modelId of availableModels) {
 // Display initial model info
 displayModelInfo(selectedModel);
 const initialModelInfo = extractModelInfo(selectedModel);
+
+// Update model name display with truncated version and full name on hover
+if (modelName) {
+  const truncatedName = selectedModel.length > 8 ? selectedModel.substring(0, 8) + '...' : selectedModel;
+  modelName.textContent = truncatedName;
+  modelName.title = selectedModel; // Full name on hover
+}
 
 modelName.innerText = "Loading initial model, features are paused until loading is complete";
 
@@ -546,6 +553,13 @@ async function handleSelectChange() {
   // Display model info for the newly selected model
   displayModelInfo(selectedModel);
   
+  // Update model name display with truncated version and full name on hover
+  if (modelName) {
+    const truncatedName = selectedModel.length > 8 ? selectedModel.substring(0, 8) + '...' : selectedModel;
+    modelName.textContent = truncatedName;
+    modelName.title = selectedModel; // Full name on hover
+  }
+  
 
 
   progressBar = new Line("#loadingContainer", {
@@ -584,6 +598,11 @@ modelSelector.addEventListener("change", handleSelectChange);
 chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
   if (msg.type === 'generate-smart-comment-popup' && msg.text && msg.tabId) {
     console.log('[POPUP] Received smart comment request from background:', msg);
+    
+    // Show "I'm generating comment now..." in the input field
+    queryInput.value = "I'm generating comment now...";
+    queryInput.disabled = true;
+    submitButton.disabled = true;
     
     // First, send an initial message to show the comment div with "Generating..." text
     chrome.runtime.sendMessage({
@@ -642,6 +661,12 @@ Text: "${msg.text}"`;
         isComplete: true
       });
       console.error('[POPUP] Error generating comment:', e);
+    } finally {
+      // Reset input field and re-enable it
+      queryInput.value = "";
+      queryInput.disabled = false;
+      submitButton.disabled = false;
+      queryInput.focus();
     }
   }
 });
