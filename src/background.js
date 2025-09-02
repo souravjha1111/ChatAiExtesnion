@@ -16,6 +16,12 @@ chrome.runtime.onInstalled.addListener(() => {
     title: "Rewrite Text",
     contexts: ["selection"]
   });
+  
+  chrome.contextMenus.create({
+    id: "explain-text",
+    title: "Explain This",
+    contexts: ["selection"]
+  });
 });
 
 // Handle context menu clicks
@@ -35,6 +41,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     // Forward the request to the popup to use the AI engine
     chrome.runtime.sendMessage({
       type: 'rewrite-text-popup',
+      text: info.selectionText,
+      tabId: tab.id
+    });
+  } else if (info.menuItemId === "explain-text" && info.selectionText) {
+    console.log('[BG] Explain text clicked with text:', info.selectionText);
+    
+    // Forward the request to the popup to use the AI engine
+    chrome.runtime.sendMessage({
+      type: 'explain-text-popup',
       text: info.selectionText,
       tabId: tab.id
     });
@@ -68,6 +83,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     console.log('[BG] Forwarding rewritten text result to content script:', msg.comment);
     chrome.tabs.sendMessage(msg.tabId, {
       type: 'rewrite-text-result-popup',
+      comment: msg.comment,
+      isComplete: msg.isComplete
+    });
+  } else if (msg.type === 'explain-text-result-popup' && msg.comment && msg.tabId) {
+    // Forward the explanation result from popup to the correct tab/content script
+    console.log('[BG] Forwarding explanation result to content script:', msg.comment);
+    chrome.tabs.sendMessage(msg.tabId, {
+      type: 'explain-text-result-popup',
       comment: msg.comment,
       isComplete: msg.isComplete
     });

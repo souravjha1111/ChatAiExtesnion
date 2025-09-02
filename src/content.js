@@ -232,10 +232,15 @@ function fallbackCopy(text) {
 
 // Listen for comment results from background script
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if ((msg.type === 'smart-comment-result-popup' || msg.type === 'rewrite-text-result-popup') && msg.comment) {
-    const isRewrite = msg.type === 'rewrite-text-result-popup';
-    showCommentGenerator(isRewrite ? 'rewrite' : 'comment');
-    updateCommentContent(msg.comment, msg.isComplete, isRewrite);
+  if ((msg.type === 'smart-comment-result-popup' || msg.type === 'rewrite-text-result-popup' || msg.type === 'explain-text-result-popup') && msg.comment) {
+    let type = 'comment';
+    if (msg.type === 'rewrite-text-result-popup') {
+      type = 'rewrite';
+    } else if (msg.type === 'explain-text-result-popup') {
+      type = 'explain';
+    }
+    showCommentGenerator(type);
+    updateCommentContent(msg.comment, msg.isComplete, type !== 'comment');
   }
 });
 
@@ -263,9 +268,13 @@ function showCommentGenerator(type = 'comment') {
   // Update title based on type
   const title = document.querySelector('.comment-title');
   if (title) {
-    title.innerHTML = type === 'rewrite' ? 
-      '<i class="fa-solid fa-pen"></i> Rewritten Text' : 
-      '<i class="fa-solid fa-comments"></i> Smart Comment';
+    if (type === 'rewrite') {
+      title.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Rewritten Text';
+    } else if (type === 'explain') {
+      title.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Explanation';
+    } else {
+      title.innerHTML = '<i class="fa-solid fa-comments"></i> Smart Comment';
+    }
   }
 }
 
@@ -276,11 +285,24 @@ function updateCommentContent(comment, isComplete = false, isRewrite = false) {
   const actions = document.getElementById('comment-actions');
   const contentText = document.getElementById('comment-content-text');
   
-  if (comment === 'Generating...') {
-    // Show generating state with simple message
-    const loadingText = isRewrite ? 'Rewriting...' : 'Generating...';
-    status.innerHTML = `<div class="loading-spinner"></div><span>${loadingText}</span>`;
-    status.className = 'comment-status generating';
+  // Get the current type from the data attribute
+  const type = commentGenerator.getAttribute('data-type') || 'comment';
+  
+  if (comment === 'Generating...' || comment === 'Rewriting...' || comment === 'Explaining...') {
+    // Show loading state with appropriate message
+    let loadingText = 'Generating...';
+    let loadingIcon = 'fa-comments';
+    
+    if (type === 'rewrite') {
+      loadingText = 'Rewriting...';
+      loadingIcon = 'fa-pen-to-square';
+    } else if (type === 'explain') {
+      loadingText = 'Explaining...';
+      loadingIcon = 'fa-lightbulb';
+    }
+    
+    status.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>${loadingText}</span>`;
+    status.className = 'comment-status loading';
     text.style.display = 'none';
     actions.style.display = 'none';
     
@@ -292,9 +314,17 @@ function updateCommentContent(comment, isComplete = false, isRewrite = false) {
     actions.style.display = 'none';
     
   } else {
-    // Show content with simple status
-    const statusIcon = isRewrite ? 'fa-pen' : 'fa-comment';
-    const statusText = isRewrite ? 'Rewritten' : 'Comment';
+    // Show content with appropriate status
+    let statusIcon = 'fa-comment';
+    let statusText = 'Comment';
+    
+    if (type === 'rewrite') {
+      statusIcon = 'fa-pen-to-square';
+      statusText = 'Rewritten';
+    } else if (type === 'explain') {
+      statusIcon = 'fa-lightbulb';
+      statusText = 'Explanation';
+    }
     status.innerHTML = `<i class="fa-solid ${statusIcon}"></i><span>${statusText}</span>`;
     status.className = 'comment-status success';
     

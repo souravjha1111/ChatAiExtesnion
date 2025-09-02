@@ -740,6 +740,78 @@ Text: "${msg.text}"`;
       submitButton.disabled = false;
       queryInput.focus();
     }
+  } else if (msg.type === 'explain-text-popup' && msg.text && msg.tabId) {
+    console.log('[POPUP] Received explain text request from background:', msg);
+    
+    // Show "I'm explaining text now..." in the input field
+    queryInput.value = "I'm explaining text now...";
+    queryInput.disabled = true;
+    submitButton.disabled = true;
+    
+    // First, send an initial message to show the explain div with "Explaining..." text
+    chrome.runtime.sendMessage({
+      type: 'explain-text-result-popup',
+      comment: 'Explaining...',
+      tabId: msg.tabId
+    });
+    
+    // Prepare the prompt for text explanation
+    const prompt = `Explain the following text or concept in a clear, concise, and educational manner. Break down complex ideas into simple terms and provide relevant context:
+
+"${msg.text}"`;
+    
+    try {
+      // Use the main chat engine to explain text
+      let curMessage = "";
+      const completion = await engine.chat.completions.create({
+        stream: true,
+        messages: [
+          { role: "user", content: prompt }
+        ]
+      });
+      
+      let explanation = "";
+      
+      // Process the stream chunks
+      for await (const chunk of completion) {
+        const curDelta = chunk.choices[0].delta.content;
+        if (curDelta) {
+          explanation += curDelta;
+          
+          // Send each update to the background script
+          chrome.runtime.sendMessage({
+            type: 'explain-text-result-popup',
+            comment: explanation,
+            tabId: msg.tabId,
+            isComplete: false
+          });
+        }
+      }
+      
+      // Send the final complete message
+      chrome.runtime.sendMessage({
+        type: 'explain-text-result-popup',
+        comment: explanation,
+        tabId: msg.tabId,
+        isComplete: true
+      });
+      
+      console.log('[POPUP] Sent explanation result to background:', explanation);
+    } catch (e) {
+      chrome.runtime.sendMessage({
+        type: 'explain-text-result-popup',
+        comment: 'Error explaining text. Please try again.',
+        tabId: msg.tabId,
+        isComplete: true
+      });
+      console.error('[POPUP] Error explaining text:', e);
+    } finally {
+      // Reset input field and re-enable it
+      queryInput.value = "";
+      queryInput.disabled = false;
+      submitButton.disabled = false;
+      queryInput.focus();
+    }
   }
 });
 
