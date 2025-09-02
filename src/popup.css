@@ -855,7 +855,7 @@ body {
 
 
 
-.mlcbot-comment-header {
+.alfred-comment-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -864,12 +864,12 @@ body {
   border-bottom: 1px solid rgb(118, 73, 254);
 }
 
-.mlcbot-comment-title {
+.alfred-comment-title {
   font-weight: 600;
   color: #fff;
 }
 
-.mlcbot-close-btn {
+.alfred-close-btn {
   background: none;
   border: none;
   font-size: 18px;
@@ -883,23 +883,23 @@ body {
   justify-content: center;
 }
 
-.mlcbot-close-btn:hover {
+.alfred-close-btn:hover {
   color: #ffd700;
 }
 
-.mlcbot-comment-content {
+.alfred-comment-content {
   margin-bottom: 12px;
   line-height: 1.4;
   color: #fff;
   word-wrap: break-word;
 }
 
-.mlcbot-comment-actions {
+.alfred-comment-actions {
   display: flex;
   justify-content: flex-end;
 }
 
-.mlcbot-copy-btn {
+.alfred-copy-btn {
   background-color: #ff8c00;
   color: white;
   border: none;
@@ -910,7 +910,7 @@ body {
   transition: background-color 0.2s;
 }
 
-.mlcbot-copy-btn:hover {
+.alfred-copy-btn:hover {
   background-color: #ff6347;
 }
 

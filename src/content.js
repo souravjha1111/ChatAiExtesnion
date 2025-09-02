@@ -1,18 +1,18 @@
-// Content script for MLCBot extension - Improved Smart Comment Feature
+// Content script for Alfred extension - Improved Smart Comment Feature
 
 let commentGenerator = null;
 let isMinimized = false;
 
 // Create the improved comment generator UI
-function createCommentGenerator() {
+function createCommentGenerator(type = 'comment') {
   if (commentGenerator) {
     document.body.removeChild(commentGenerator);
   }
   
   // Create the main container
   commentGenerator = document.createElement('div');
-  commentGenerator.className = 'mlc-comment-generator';
-  commentGenerator.id = 'mlc-comment-generator';
+  commentGenerator.className = 'alfred-comment-generator';
+  commentGenerator.id = 'alfred-comment-generator';
   
   // Create the HTML structure
   commentGenerator.innerHTML = `
@@ -142,9 +142,9 @@ function copyComment() {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(textToCopy).then(() => {
         showCopySuccess();
-        console.log('[MLCBot] Comment copied to clipboard:', textToCopy);
+        console.log('[Alfred] Comment copied to clipboard:', textToCopy);
       }).catch(err => {
-        console.error('[MLCBot] Failed to copy comment:', err);
+        console.error('[Alfred] Failed to copy comment:', err);
         // Fallback copy method
         fallbackCopy(textToCopy);
       });
@@ -153,7 +153,7 @@ function copyComment() {
       fallbackCopy(textToCopy);
     }
   } else {
-    console.warn('[MLCBot] No comment content to copy');
+    console.warn('[Alfred] No comment content to copy');
     showCopyError('No content to copy');
   }
 }
@@ -217,14 +217,14 @@ function fallbackCopy(text) {
     const successful = document.execCommand('copy');
     if (successful) {
       showCopySuccess();
-      console.log('[MLCBot] Comment copied using fallback method:', text);
+      console.log('[Alfred] Comment copied using fallback method:', text);
     } else {
       showCopyError('Copy failed');
-      console.error('[MLCBot] Fallback copy failed');
+      console.error('[Alfred] Fallback copy failed');
     }
   } catch (err) {
     showCopyError('Copy failed');
-    console.error('[MLCBot] Fallback copy error:', err);
+    console.error('[Alfred] Fallback copy error:', err);
   }
   
   document.body.removeChild(textArea);
@@ -232,19 +232,21 @@ function fallbackCopy(text) {
 
 // Listen for comment results from background script
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.type === 'smart-comment-result-popup' && msg.comment) {
-    showCommentGenerator();
-    updateCommentContent(msg.comment, msg.isComplete);
+  if ((msg.type === 'smart-comment-result-popup' || msg.type === 'rewrite-text-result-popup') && msg.comment) {
+    const isRewrite = msg.type === 'rewrite-text-result-popup';
+    showCommentGenerator(isRewrite ? 'rewrite' : 'comment');
+    updateCommentContent(msg.comment, msg.isComplete, isRewrite);
   }
 });
 
 // Show the comment generator
-function showCommentGenerator() {
+function showCommentGenerator(type = 'comment') {
   if (!commentGenerator) {
-    createCommentGenerator();
+    createCommentGenerator(type);
   }
   
   commentGenerator.style.display = 'block';
+  commentGenerator.setAttribute('data-type', type);
   
   // If minimized, expand it to show the new comment
   if (isMinimized) {
@@ -257,10 +259,18 @@ function showCommentGenerator() {
     status.innerHTML = '<i class="fa-solid fa-lightbulb"></i><span>Ready</span>';
     status.className = 'comment-status';
   }
+  
+  // Update title based on type
+  const title = document.querySelector('.comment-title');
+  if (title) {
+    title.innerHTML = type === 'rewrite' ? 
+      '<i class="fa-solid fa-pen"></i> Rewritten Text' : 
+      '<i class="fa-solid fa-comments"></i> Smart Comment';
+  }
 }
 
 // Update comment content
-function updateCommentContent(comment, isComplete = false) {
+function updateCommentContent(comment, isComplete = false, isRewrite = false) {
   const status = document.getElementById('comment-status');
   const text = document.getElementById('comment-text');
   const actions = document.getElementById('comment-actions');
@@ -268,7 +278,8 @@ function updateCommentContent(comment, isComplete = false) {
   
   if (comment === 'Generating...') {
     // Show generating state with simple message
-    status.innerHTML = '<div class="loading-spinner"></div><span>Generating...</span>';
+    const loadingText = isRewrite ? 'Rewriting...' : 'Generating...';
+    status.innerHTML = `<div class="loading-spinner"></div><span>${loadingText}</span>`;
     status.className = 'comment-status generating';
     text.style.display = 'none';
     actions.style.display = 'none';
@@ -281,8 +292,10 @@ function updateCommentContent(comment, isComplete = false) {
     actions.style.display = 'none';
     
   } else {
-    // Show comment content with simple status
-    status.innerHTML = '<i class="fa-solid fa-comment"></i><span>Comment</span>';
+    // Show content with simple status
+    const statusIcon = isRewrite ? 'fa-pen' : 'fa-comment';
+    const statusText = isRewrite ? 'Rewritten' : 'Comment';
+    status.innerHTML = `<i class="fa-solid ${statusIcon}"></i><span>${statusText}</span>`;
     status.className = 'comment-status success';
     
     contentText.textContent = comment;
@@ -305,7 +318,7 @@ function init() {
   // It will be created when needed
   
   // Show a subtle indicator that the extension is loaded
-  console.log('[MLCBot] Comment generator extension loaded. Select text and right-click to generate comments.');
+  console.log('[Alfred] Comment generator extension loaded. Select text and right-click to generate comments.');
 }
 
 // Start when DOM is ready

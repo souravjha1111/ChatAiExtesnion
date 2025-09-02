@@ -10,6 +10,12 @@ chrome.runtime.onInstalled.addListener(() => {
     title: "Generate Smart Comment",
     contexts: ["selection"]
   });
+  
+  chrome.contextMenus.create({
+    id: "rewrite-text",
+    title: "Rewrite Text",
+    contexts: ["selection"]
+  });
 });
 
 // Handle context menu clicks
@@ -20,6 +26,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     // Forward the request to the popup to use the AI engine
     chrome.runtime.sendMessage({
       type: 'generate-smart-comment-popup',
+      text: info.selectionText,
+      tabId: tab.id
+    });
+  } else if (info.menuItemId === "rewrite-text" && info.selectionText) {
+    console.log('[BG] Rewrite text clicked with text:', info.selectionText);
+    
+    // Forward the request to the popup to use the AI engine
+    chrome.runtime.sendMessage({
+      type: 'rewrite-text-popup',
       text: info.selectionText,
       tabId: tab.id
     });
@@ -45,6 +60,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     console.log('[BG] Forwarding comment result to content script:', msg.comment);
     chrome.tabs.sendMessage(msg.tabId, {
       type: 'smart-comment-result-popup',
+      comment: msg.comment,
+      isComplete: msg.isComplete
+    });
+  } else if (msg.type === 'rewrite-text-result-popup' && msg.comment && msg.tabId) {
+    // Forward the rewritten text result from popup to the correct tab/content script
+    console.log('[BG] Forwarding rewritten text result to content script:', msg.comment);
+    chrome.tabs.sendMessage(msg.tabId, {
+      type: 'rewrite-text-result-popup',
       comment: msg.comment,
       isComplete: msg.isComplete
     });

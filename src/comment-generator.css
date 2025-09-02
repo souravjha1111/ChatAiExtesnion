@@ -1,5 +1,5 @@
 /* Comment Generator UI Styles */
-.mlc-comment-generator {
+.alfred-comment-generator {
   position: fixed;
   top: 20px;
   left: 20px;
@@ -17,32 +17,32 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.mlc-comment-generator:hover {
+.alfred-comment-generator:hover {
   transform: translateY(-2px);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
 }
 
-.mlc-comment-generator.minimized {
+.alfred-comment-generator.minimized {
   width: 60px;
   height: 60px;
   border-radius: 50%;
   overflow: hidden;
 }
 
-.mlc-comment-generator.minimized .comment-content {
+.alfred-comment-generator.minimized .comment-content {
   display: none;
 }
 
-.mlc-comment-generator.minimized .comment-header {
+.alfred-comment-generator.minimized .comment-header {
   justify-content: center;
   padding: 0;
 }
 
-.mlc-comment-generator.minimized .minimize-btn {
+.alfred-comment-generator.minimized .minimize-btn {
   display: none;
 }
 
-.mlc-comment-generator.minimized .expand-btn {
+.alfred-comment-generator.minimized .expand-btn {
   display: block;
 }
 
@@ -231,7 +231,7 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .mlc-comment-generator {
+  .alfred-comment-generator {
     width: 300px;
     left: 10px;
     top: 10px;
@@ -248,7 +248,7 @@
 
 /* Dark theme support */
 @media (prefers-color-scheme: dark) {
-  .mlc-comment-generator {
+  .alfred-comment-generator {
     background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
     border-color: rgba(255, 255, 255, 0.1);
   }

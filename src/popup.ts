@@ -179,13 +179,13 @@ modelName.innerText = "Loading initial model, features are paused until loading 
 
 let engine: MLCEngineInterface;
 try {
-  console.log('[DEBUG] Creating MLC engine for model:', selectedModel);
+  console.log('[DEBUG] Creating Alfred engine for model:', selectedModel);
   engine = await CreateMLCEngine(selectedModel, {
     initProgressCallback: initProgressCallback,
   });
-  console.log('[DEBUG] MLC engine created successfully');
+  console.log('[DEBUG] Alfred engine created successfully');
 } catch (error) {
-  console.error('[DEBUG] Error creating MLC engine:', error);
+  console.error('[DEBUG] Error creating Alfred engine:', error);
   // Enable inputs even if engine creation fails
   enableInputs();
   throw error;
@@ -668,6 +668,78 @@ Text: "${msg.text}"`;
       submitButton.disabled = false;
       queryInput.focus();
     }
+  } else if (msg.type === 'rewrite-text-popup' && msg.text && msg.tabId) {
+    console.log('[POPUP] Received rewrite text request from background:', msg);
+    
+    // Show "I'm rewriting text now..." in the input field
+    queryInput.value = "I'm rewriting text now...";
+    queryInput.disabled = true;
+    submitButton.disabled = true;
+    
+    // First, send an initial message to show the rewrite div with "Rewriting..." text
+    chrome.runtime.sendMessage({
+      type: 'rewrite-text-result-popup',
+      comment: 'Rewriting...',
+      tabId: msg.tabId
+    });
+    
+    // Prepare the prompt for text rewriting
+    const prompt = `Rewrite the following text with better grammar and in better English. Maintain the original meaning but improve clarity, flow, and correctness:
+
+"${msg.text}"`;
+    
+    try {
+      // Use the main chat engine to rewrite text
+      let curMessage = "";
+      const completion = await engine.chat.completions.create({
+        stream: true,
+        messages: [
+          { role: "user", content: prompt }
+        ]
+      });
+      
+      let rewrittenText = "";
+      
+      // Process the stream chunks
+      for await (const chunk of completion) {
+        const curDelta = chunk.choices[0].delta.content;
+        if (curDelta) {
+          rewrittenText += curDelta;
+          
+          // Send each update to the background script
+          chrome.runtime.sendMessage({
+            type: 'rewrite-text-result-popup',
+            comment: rewrittenText,
+            tabId: msg.tabId,
+            isComplete: false
+          });
+        }
+      }
+      
+      // Send the final complete message
+      chrome.runtime.sendMessage({
+        type: 'rewrite-text-result-popup',
+        comment: rewrittenText,
+        tabId: msg.tabId,
+        isComplete: true
+      });
+      
+      console.log('[POPUP] Sent rewritten text to background:', rewrittenText);
+    } catch (e) {
+      chrome.runtime.sendMessage({
+        type: 'rewrite-text-result-popup',
+        comment: 'Error rewriting text. Please try again.',
+        tabId: msg.tabId,
+        isComplete: true
+      });
+      console.error('[POPUP] Error rewriting text:', e);
+    } finally {
+      // Reset input field and re-enable it
+      queryInput.value = "";
+      queryInput.disabled = false;
+      submitButton.disabled = false;
+      queryInput.focus();
+    }
   }
 });
 
@@ -1127,7 +1199,7 @@ function displayModelInfo(modelId: string) {
   if (modelTypeElem) modelTypeElem.textContent = `Type: ${modelInfo.family} (${modelInfo.quantization})`;
 }
 
-// Function to get real-time performance metrics from MLC engine
+// Function to get real-time performance metrics from Alfred engine
 async function getEngineMetrics(): Promise<any> {
   try {
     // Get basic engine state information
