@@ -269,8 +269,22 @@
   transform: scale(1.1);
 }
 
-.minimize-btn, .expand-btn {
+.minimize-btn {
+  display: block;
+}
+
+.expand-btn {
   display: none;
+}
+
+.expand-btn.show {
+  display: block;
+}
+
+.comment-text.hidden,
+.comment-actions.hidden,
+.alfred-comment-generator.hidden {
+  display: none !important;
 }
 
 .comment-content {
@@ -312,6 +326,10 @@
   display: flex;
   gap: 12px;
   margin-top: 16px;
+}
+
+.comment-actions.hidden {
+  display: none !important;
 }
 
 .action-btn {

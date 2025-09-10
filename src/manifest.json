@@ -37,7 +37,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["comment-generator.css"],
+      "resources": ["comment-generator.css", "inline-styles.css"],
       "matches": ["<all_urls>"]
     }
   ]

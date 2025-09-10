@@ -217,7 +217,7 @@ function createCommentGenerator(type = 'comment') {
         <button class="control-btn minimize-btn" id="minimize-btn" title="Minimize">
           <span class="icon">➖</span>
         </button>
-        <button class="control-btn expand-btn" id="expand-btn" title="Expand" style="display: none;">
+        <button class="control-btn expand-btn" id="expand-btn" title="Expand">
           <span class="icon">➕</span>
         </button>
         <button class="control-btn" id="close-btn" title="Close">
@@ -232,11 +232,11 @@ function createCommentGenerator(type = 'comment') {
         <span>Ready</span>
       </div>
       
-      <div class="comment-text" id="comment-text" style="display: none;">
+      <div class="comment-text hidden" id="comment-text">
         <div id="comment-content-text"></div>
       </div>
       
-      <div class="comment-actions" id="comment-actions" style="display: none;">
+      <div class="comment-actions hidden" id="comment-actions">
         <button class="action-btn success" id="copy-btn">
           <span class="icon">📋</span>
           Copy
@@ -313,7 +313,7 @@ function expandCommentGenerator() {
 function closeCommentGenerator() {
   if (commentGenerator) {
     // Hide the comment generator
-    commentGenerator.style.display = 'none';
+    commentGenerator.classList.add('hidden');
     
     // Send message to background script to stop any ongoing generation
     chrome.runtime.sendMessage({
@@ -330,8 +330,8 @@ function closeCommentGenerator() {
     // Hide the comment text and actions
     const commentText = document.getElementById('comment-text');
     const commentActions = document.getElementById('comment-actions');
-    if (commentText) commentText.style.display = 'none';
-    if (commentActions) commentActions.style.display = 'none';
+    if (commentText) commentText.classList.add('hidden');
+    if (commentActions) commentActions.classList.add('hidden');
   }
 }
 
@@ -455,7 +455,7 @@ function showCommentGenerator(type = 'comment') {
     createCommentGenerator(type);
   }
   
-  commentGenerator.style.display = 'block';
+  commentGenerator.classList.remove('hidden');
   commentGenerator.setAttribute('data-type', type);
   
   // If minimized, expand it to show the new comment
@@ -508,15 +508,15 @@ function updateCommentContent(comment, isComplete = false, isRewrite = false) {
     
     status.innerHTML = `<span class="icon loading-spinner">🔄</span><span>${loadingText}</span>`;
     status.className = 'comment-status loading';
-    text.style.display = 'none';
-    actions.style.display = 'none';
+    text.classList.add('hidden');
+    actions.classList.add('hidden');
     
   } else if (comment.includes('Error')) {
     // Show error state
     status.innerHTML = '<span class="icon">⚠️</span><span>Error</span>';
     status.className = 'comment-status error';
-    text.style.display = 'none';
-    actions.style.display = 'none';
+    text.classList.add('hidden');
+    actions.classList.add('hidden');
     
   } else {
     // Show content with appropriate status
@@ -534,11 +534,11 @@ function updateCommentContent(comment, isComplete = false, isRewrite = false) {
     status.className = 'comment-status success';
     
     contentText.textContent = comment;
-    text.style.display = 'block';
+    text.classList.remove('hidden');
     text.classList.add('new-comment');
     
     if (isComplete) {
-      actions.style.display = 'flex';
+      actions.classList.remove('hidden');
       // Remove animation class after animation completes
       setTimeout(() => {
         text.classList.remove('new-comment');
