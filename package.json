@@ -4,7 +4,7 @@
   "description": "AI-powered chatbot with local LLM",
   "private": true,
   "scripts": {
-    "build": "parcel build src/manifest.json --config @parcel/config-webextension"
+    "build": "parcel build src/manifest.json --config @parcel/config-webextension --public-url ./"
   },
   "author": "",
   "license": "ISC",

@@ -58,31 +58,25 @@ function createFloatingActionMenu() {
   floatingMenu.id = 'alfred-floating-menu';
   floatingMenu.style.display = 'none';
   
-  // Create the HTML structure
+  // Create the HTML structure with Unicode fallback icons
   floatingMenu.innerHTML = `
     <div class="floating-menu-actions">
       <button class="floating-action-btn" id="floating-comment-btn">
-        <i class="fa-solid fa-comments"></i>
+        <span class="floating-icon">💬</span>
         <span class="floating-tooltip">Generate Smart Comment</span>
       </button>
       <button class="floating-action-btn" id="floating-rewrite-btn">
-        <i class="fa-solid fa-pen"></i>
+        <span class="floating-icon">✏️</span>
         <span class="floating-tooltip">Rewrite Text</span>
       </button>
       <button class="floating-action-btn" id="floating-explain-btn">
-        <i class="fa-solid fa-lightbulb"></i>
+        <span class="floating-icon">💡</span>
         <span class="floating-tooltip">Explain This</span>
       </button>
     </div>
   `;
   
-  // Add Font Awesome for icons if not already added
-  if (!document.querySelector('link[href*="font-awesome"]')) {
-    const fontAwesome = document.createElement('link');
-    fontAwesome.rel = 'stylesheet';
-    fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-    document.head.appendChild(fontAwesome);
-  }
+  // Unicode icons are used, no need for Font Awesome
   
   // Add our custom CSS
   if (!document.querySelector('link[href*="comment-generator"]')) {
@@ -196,16 +190,10 @@ function handleTextSelection(event) {
         showFloatingMenu(x, y);
       }
       
-      // Ensure the Font Awesome icons are loaded
-      if (!document.querySelector('link[href*="font-awesome"]')) {
-        const fontAwesome = document.createElement('link');
-        fontAwesome.rel = 'stylesheet';}
-        fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-        document.head.appendChild(fontAwesome);
-      }
+      // Unicode icons are used, no need for Font Awesome loading
     }
   }
-
+}
 
 // Create the improved comment generator UI
 function createCommentGenerator(type = 'comment') {
@@ -218,29 +206,29 @@ function createCommentGenerator(type = 'comment') {
   commentGenerator.className = 'alfred-comment-generator';
   commentGenerator.id = 'alfred-comment-generator';
   
-  // Create the HTML structure
+  // Create the HTML structure with Unicode icons
   commentGenerator.innerHTML = `
     <div class="comment-header">
       <h3 class="comment-title">
-        <i class="fa-solid fa-comments"></i>
+        <span class="icon">💬</span>
         Smart Comment
       </h3>
       <div class="header-controls">
         <button class="control-btn minimize-btn" id="minimize-btn" title="Minimize">
-          <i class="fa-solid fa-minus"></i>
+          <span class="icon">➖</span>
         </button>
         <button class="control-btn expand-btn" id="expand-btn" title="Expand" style="display: none;">
-          <i class="fa-solid fa-plus"></i>
+          <span class="icon">➕</span>
         </button>
         <button class="control-btn" id="close-btn" title="Close">
-          <i class="fa-solid fa-times"></i>
+          <span class="icon">✖️</span>
         </button>
       </div>
     </div>
     
     <div class="comment-content">
       <div class="comment-status" id="comment-status">
-        <i class="fa-solid fa-lightbulb"></i>
+        <span class="icon">💡</span>
         <span>Ready</span>
       </div>
       
@@ -250,20 +238,14 @@ function createCommentGenerator(type = 'comment') {
       
       <div class="comment-actions" id="comment-actions" style="display: none;">
         <button class="action-btn success" id="copy-btn">
-          <i class="fa-solid fa-copy"></i>
+          <span class="icon">📋</span>
           Copy
         </button>
       </div>
     </div>
   `;
   
-  // Add Font Awesome for icons
-  if (!document.querySelector('link[href*="font-awesome"]')) {
-    const fontAwesome = document.createElement('link');
-    fontAwesome.rel = 'stylesheet';
-    fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-    document.head.appendChild(fontAwesome);
-  }
+  // Unicode icons are used, no need for Font Awesome
   
   // Add our custom CSS
   if (!document.querySelector('link[href*="comment-generator"]')) {
@@ -341,7 +323,7 @@ function closeCommentGenerator() {
     // Reset the UI state
     const statusElement = document.getElementById('comment-status');
     if (statusElement) {
-      statusElement.innerHTML = '<i class="fa-solid fa-lightbulb"></i><span>Ready</span>';
+      statusElement.innerHTML = '<span class="icon">💡</span><span>Ready</span>';
       statusElement.className = 'comment-status';
     }
     
@@ -386,7 +368,7 @@ function showCopySuccess() {
   const copyBtn = document.getElementById('copy-btn');
   if (copyBtn) {
     const originalHTML = copyBtn.innerHTML;
-    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>Copied!';
+    copyBtn.innerHTML = '<span class="icon">✓</span>Copied!';
     copyBtn.classList.add('success');
     
     setTimeout(() => {
@@ -401,7 +383,7 @@ function showCopyError(message) {
   const copyBtn = document.getElementById('copy-btn');
   if (copyBtn) {
     const originalHTML = copyBtn.innerHTML;
-    copyBtn.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i>Error';
+    copyBtn.innerHTML = '<span class="icon">⚠️</span>Error';
     copyBtn.classList.add('error');
     
     setTimeout(() => {
@@ -413,12 +395,12 @@ function showCopyError(message) {
   // Also show error in status
   const status = document.getElementById('comment-status');
   if (status) {
-    status.innerHTML = `<i class="fa-solid fa-exclamation-triangle"></i><span>${message}</span>`;
+    status.innerHTML = `<span class="icon">⚠️</span><span>${message}</span>`;
     status.className = 'comment-status error';
     
          setTimeout(() => {
        if (status.className.includes('error')) {
-         status.innerHTML = '<i class="fa-solid fa-comment"></i><span>Comment</span>';
+         status.innerHTML = '<span class="icon">💬</span><span>Comment</span>';
          status.className = 'comment-status success';
        }
      }, 3000);
@@ -484,7 +466,7 @@ function showCommentGenerator(type = 'comment') {
   // Show initial status
   const status = document.getElementById('comment-status');
   if (status) {
-    status.innerHTML = '<i class="fa-solid fa-lightbulb"></i><span>Ready</span>';
+    status.innerHTML = '<span class="icon">💡</span><span>Ready</span>';
     status.className = 'comment-status';
   }
   
@@ -492,11 +474,11 @@ function showCommentGenerator(type = 'comment') {
   const title = document.querySelector('.comment-title');
   if (title) {
     if (type === 'rewrite') {
-      title.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Rewritten Text';
+      title.innerHTML = '<span class="icon">✏️</span> Rewritten Text';
     } else if (type === 'explain') {
-      title.innerHTML = '<i class="fa-solid fa-lightbulb"></i> Explanation';
+      title.innerHTML = '<span class="icon">💡</span> Explanation';
     } else {
-      title.innerHTML = '<i class="fa-solid fa-comments"></i> Smart Comment';
+      title.innerHTML = '<span class="icon">💬</span> Smart Comment';
     }
   }
 }
@@ -514,41 +496,41 @@ function updateCommentContent(comment, isComplete = false, isRewrite = false) {
   if (comment === 'Generating...' || comment === 'Rewriting...' || comment === 'Explaining...') {
     // Show loading state with appropriate message
     let loadingText = 'Generating...';
-    let loadingIcon = 'fa-comments';
+    let loadingIcon = '💬';
     
     if (type === 'rewrite') {
       loadingText = 'Rewriting...';
-      loadingIcon = 'fa-pen-to-square';
+      loadingIcon = '✏️';
     } else if (type === 'explain') {
       loadingText = 'Explaining...';
-      loadingIcon = 'fa-lightbulb';
+      loadingIcon = '💡';
     }
     
-    status.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>${loadingText}</span>`;
+    status.innerHTML = `<span class="icon loading-spinner">🔄</span><span>${loadingText}</span>`;
     status.className = 'comment-status loading';
     text.style.display = 'none';
     actions.style.display = 'none';
     
   } else if (comment.includes('Error')) {
     // Show error state
-    status.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i><span>Error</span>';
+    status.innerHTML = '<span class="icon">⚠️</span><span>Error</span>';
     status.className = 'comment-status error';
     text.style.display = 'none';
     actions.style.display = 'none';
     
   } else {
     // Show content with appropriate status
-    let statusIcon = 'fa-comment';
+    let statusIcon = '💬';
     let statusText = 'Comment';
     
     if (type === 'rewrite') {
-      statusIcon = 'fa-pen-to-square';
+      statusIcon = '✏️';
       statusText = 'Rewritten';
     } else if (type === 'explain') {
-      statusIcon = 'fa-lightbulb';
+      statusIcon = '💡';
       statusText = 'Explanation';
     }
-    status.innerHTML = `<i class="fa-solid ${statusIcon}"></i><span>${statusText}</span>`;
+    status.innerHTML = `<span class="icon">${statusIcon}</span><span>${statusText}</span>`;
     status.className = 'comment-status success';
     
     contentText.textContent = comment;
