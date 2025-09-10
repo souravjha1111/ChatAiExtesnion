@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Alfred</title>
+    <link rel="stylesheet" href="popup.css" />
+    <link rel="stylesheet" href="popup-loading.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-top">
+          <select id="model-selection"></select>
+          <button id="clear-chat" class="btn clear-btn" title="Clear Chat History">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          <div class="hamburger-menu" style="position: relative;">
+            <button id="hamburger-btn" class="btn hamburger-btn" title="Menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div id="hamburger-dropdown" class="hamburger-dropdown hidden">
+              <button id="theme-toggle" class="dropdown-btn theme-btn" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i>
+                <span>Toggle Theme</span>
+              </button>
+              <button id="help-btn" class="dropdown-btn help-btn" title="Help & Shortcuts">
+                <i class="fa-solid fa-question"></i>
+                <span>Help & Shortcuts</span>
+              </button>
+              <button id="model-stats-btn" class="dropdown-btn stats-btn" title="View Model Stats">
+                <i class="fa-solid fa-chart-bar"></i>
+                <span>Model Stats</span>
+              </button>
+              <div class="dropdown-divider"></div>
+              <button id="floating-menu-toggle" class="dropdown-btn toggle-btn" title="Toggle Floating Menu">
+                <i class="fa-solid fa-magic"></i>
+                <span>Floating Menu</span>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="floating-menu-checkbox" class="toggle-checkbox">
+                  <label for="floating-menu-checkbox" class="toggle-label"></label>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+        <style>
+          .hamburger-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            min-width: 200px;
+          }
+          
+          .dropdown-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 8px 0;
+          }
+          
+          .comment-model-section {
+            padding: 8px 12px;
+          }
+          
+          .dropdown-label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: var(--text-color);
+          }
+          
+          .dropdown-select {
+            width: 100%;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+            font-size: 12px;
+          }
+        </style>
+        <div id="loadingBox">
+          <p id="init-label">Initializing model...</p>
+          <div id="loadingContainer"></div>
+        </div>
+        <div class="model-info-container">
+          <p id="model-name"></p>
+        </div>
+        <div id="model-stats-panel" class="model-stats-panel hidden">
+          <p id="model-size"></p>
+          <p id="model-params"></p>
+          <p id="model-type"></p>
+        </div>
+      </div>
+
+
+
+      <div class="chat-container">
+        <div id="chat-history"></div>
+      </div>
+
+      <div class="input-section">
+        <div class="input-container form-group">
+          <textarea
+            id="query-input"
+            placeholder="What's on your mind?"
+            rows="1"
+            style="resize: none; overflow: hidden;"
+          ></textarea>
+          <button id="submit-button" class="btn">
+            <i class="fa fa-comments"></i>
+          </button>
+        </div>
+
+
+
+      </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="help-modal">
+      <div class="help-modal-content">
+        <div class="help-modal-header">
+          <h3>Help & Keyboard Shortcuts</h3>
+          <button id="close-help" class="close-help-btn">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+        <div class="help-modal-body">
+          <div class="shortcuts-section">
+            <h4>Keyboard Shortcuts</h4>
+            <div class="shortcut-item">
+              <kbd>Ctrl+Enter</kbd>
+              <span>Send message</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>Enter</kbd>
+              <span>New line in message</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>Esc</kbd>
+              <span>Clear input field</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>Ctrl+/</kbd>
+              <span>Focus and select input</span>
+            </div>
+            <div class="shortcut-item">
+              <kbd>Ctrl+K</kbd>
+              <span>Clear chat history</span>
+            </div>
+          </div>
+          
+          <div class="features-section">
+            <h4>Features</h4>
+            <div class="feature-item">
+              <i class="fa-solid fa-palette"></i>
+              <span>Dark/Light theme toggle</span>
+            </div>
+            <div class="feature-item">
+              <i class="fa-solid fa-edit"></i>
+              <span>Edit messages</span>
+            </div>
+            <div class="feature-item">
+              <i class="fa-solid fa-copy"></i>
+              <span>Copy messages</span>
+            </div>
+            <div class="feature-item">
+              <i class="fa-solid fa-trash"></i>
+              <span>Clear chat history</span>
+            </div>
+            <div class="feature-item">
+              <i class="fa-solid fa-exchange-alt"></i>
+              <span>Switch between models</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>

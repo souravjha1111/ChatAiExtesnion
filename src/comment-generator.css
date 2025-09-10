@@ -1,0 +1,436 @@
+/* Comment Generator UI Styles */
+
+/* Floating Action Menu Styles */
+.alfred-floating-menu {
+  position: absolute;
+  z-index: 10000;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: floatingMenuAppear 0.4s ease-out;
+}
+
+.alfred-floating-menu:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes floatingMenuAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.floating-menu-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.floating-action-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+.floating-action-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.floating-action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+  transform: scale(1.15) translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.floating-action-btn:hover::before {
+  opacity: 1;
+}
+
+.floating-action-btn:active {
+  transform: scale(0.95) translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.floating-action-btn i {
+  font-size: 18px;
+  transition: all 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: white;
+  z-index: 10;
+  position: relative;
+}
+
+.floating-action-btn:hover i {
+  transform: scale(1.2);
+  animation: iconPulse 1.5s infinite;
+}
+
+@keyframes iconPulse {
+  0% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1.2);
+  }
+}
+
+/* Tooltip styles */
+.floating-action-btn {
+  position: relative;
+}
+
+.floating-tooltip {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.floating-action-btn:hover .floating-tooltip {
+  opacity: 1;
+  visibility: visible;
+  bottom: -35px;
+  animation: tooltipPulse 1.5s infinite;
+}
+
+@keyframes tooltipPulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.05);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}
+.alfred-comment-generator {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 350px;
+  max-height: 500px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: white;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.alfred-comment-generator:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+.alfred-comment-generator.minimized {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.alfred-comment-generator.minimized .comment-content {
+  display: none;
+}
+
+.alfred-comment-generator.minimized .comment-header {
+  justify-content: center;
+  padding: 0;
+}
+
+.alfred-comment-generator.minimized .minimize-btn {
+  display: none;
+}
+
+.alfred-comment-generator.minimized .expand-btn {
+  display: block;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.comment-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comment-title i {
+  font-size: 18px;
+  color: #ffd166;
+}
+
+.header-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.control-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.minimize-btn, .expand-btn {
+  display: none;
+}
+
+.comment-content {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.comment-status {
+  text-align: center;
+  padding: 20px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.comment-status.generating {
+  color: #ffd166;
+}
+
+.comment-status.error {
+  color: #ff6b6b;
+}
+
+.comment-status.success {
+  color: #51cf66;
+}
+
+.comment-text {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  line-height: 1.6;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-height: 60px;
+  word-wrap: break-word;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.action-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #ffd166 0%, #f7931e 100%);
+  border-color: #ffd166;
+  color: #333;
+}
+
+.action-btn.primary:hover {
+  background: linear-gradient(135deg, #ffdb4d 0%, #f9a825 100%);
+}
+
+.action-btn.success {
+  background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+  border-color: #51cf66;
+  color: white;
+}
+
+.action-btn.success:hover {
+  background: linear-gradient(135deg, #69db7c 0%, #51cf66 100%);
+}
+
+.action-btn.error {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  border-color: #ff6b6b;
+  color: white;
+}
+
+.action-btn.error:hover {
+  background: linear-gradient(135deg, #ff8787 0%, #ff6b6b 100%);
+}
+
+.action-btn i {
+  font-size: 14px;
+}
+
+/* Loading animation */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffd166;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Scrollbar styling */
+.comment-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.comment-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.comment-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.comment-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .alfred-comment-generator {
+    width: 300px;
+    left: 10px;
+    top: 10px;
+  }
+  
+  .comment-content {
+    padding: 16px;
+  }
+  
+  .comment-actions {
+    flex-direction: column;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .alfred-comment-generator {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Animation for new comments */
+.comment-text.new-comment {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Pulse animation for generating state */
+.generating .comment-text {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
